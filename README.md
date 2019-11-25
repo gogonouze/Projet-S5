@@ -1,6 +1,7 @@
 # Projet-S4
 
 ## [FR]
+Projet L3S5 Informatique
 
 ### Interface de communication par tickets entre clients et opérateurs :
 * Création de ticket
@@ -8,4 +9,3 @@
 * Communication client-opérateur via serveur
 * Clôture du ticket
 * Conservation de l'historique de la communication utilisateur/serveur
-
