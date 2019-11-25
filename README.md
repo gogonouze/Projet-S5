@@ -10,7 +10,7 @@ Projet L3S5 Informatique
 * Clôture du ticket
 * Conservation de l'historique de la communication utilisateur/serveur
 
-## Auteurs
+### Auteurs
 * **EB-LEVADOUX Ugo** - *Initial work* - [gogonouze](https://github.com/gogonouze)
 * **MEUNIER Romain** - *Initial work*
 * **RIGAL Pierre** - *Initial work*
