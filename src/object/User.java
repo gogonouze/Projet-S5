@@ -1,9 +1,20 @@
 package object;
 
 public abstract class User {
+	private String name;
+	private Discussion discussions[];
+	private Group groups[];
 
-	public User() {
-		// TODO Auto-generated constructor stub
+	public User(String name) {
+		this.name = name;
+	}
+	
+	public void sendMessage(String message, Discussion discussion) {
+		
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }
