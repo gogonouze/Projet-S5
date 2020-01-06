@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  ven. 03 jan. 2020 à 14:39
+-- Généré le :  lun. 06 jan. 2020 à 17:43
 -- Version du serveur :  10.4.10-MariaDB
 -- Version de PHP :  7.3.12
 
@@ -78,6 +78,13 @@ CREATE TABLE IF NOT EXISTS `group` (
   PRIMARY KEY (`IdG`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Déchargement des données de la table `group`
+--
+
+INSERT INTO `group` (`IdG`, `Name`) VALUES
+(1, 'groupeTest');
+
 -- --------------------------------------------------------
 
 --
@@ -88,8 +95,8 @@ DROP TABLE IF EXISTS `message`;
 CREATE TABLE IF NOT EXISTS `message` (
   `IdM` int(11) NOT NULL,
   `Content` varchar(3000) NOT NULL,
-  `IsRead` tinyint(1) NOT NULL,
-  `Time` time NOT NULL,
+  `IsRead` int(1) NOT NULL,
+  `Time` varchar(50) NOT NULL,
   `IdU` int(11) NOT NULL,
   `IdD` int(11) NOT NULL,
   PRIMARY KEY (`IdM`),
@@ -109,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `Name` varchar(20) NOT NULL,
   `ForName` varchar(20) NOT NULL,
   `Password` varchar(50) NOT NULL,
-  `IsConnected` tinyint(1) NOT NULL,
+  `IsConnected` int(11) NOT NULL,
   PRIMARY KEY (`IdU`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

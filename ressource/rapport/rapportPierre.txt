@@ -5,3 +5,10 @@
 -J'implémente Comparable dans Message pour les comparer en fonction de leur date de création.
 
 -J'ai créé la classe Tests pour essayer des trucs.
+
+
+
+----- Fonctions en rapport avec la bdd ------
+* Dans User j'ai ajouté un attribut id, j'ai ajouté un paramètre id au constructeur et un getteur sur id pour pouvoir chercher un message dans la bdd.
+* Dans Server : j'ai changé dans la fonction isconnected le paramètre "String nameUser" par "int id".
+* Dans Server : ligne 172 j'ai changé client.getNameUser() par client.getId() à cause du changement dans isconnected.

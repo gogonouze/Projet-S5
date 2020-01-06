@@ -9,6 +9,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 
 public class Server implements Runnable{
@@ -164,7 +169,7 @@ public class Server implements Runnable{
 		Socket socket;
 		PrintWriter output = null;
 		for( User client : getDiscussion(discussion).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
+			if(client.getNameUser()!=user && isconnected(client.getId())) {
 				try {
 					socket = new Socket(getIp(client.getNameUser()),PORT);//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
@@ -179,9 +184,33 @@ public class Server implements Runnable{
 		
 	}
 
-	private boolean isconnected(String nameUser) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isconnected(int id) {
+		
+		Connection con;
+		Boolean connected = false;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IsConnected FROM bdd_projet_s5.user");
+			
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (id == idU) {
+					if (rst.getInt("IsConnected") == 1){
+						connected = true;
+					}
+					else {
+						connected = false;
+					}
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return connected;
 	}
 
 	private Discussion getDiscussion(String discussion) {
@@ -210,7 +239,7 @@ public class Server implements Runnable{
 	}
 
 	private void updateStatus(String message, String user) {
-		// TODO Auto-generated method stub
+		// cet user a lu ce message
 		
 	}
 
@@ -230,22 +259,21 @@ public class Server implements Runnable{
 	}
 
 	protected void updateBDDMessage(String user, String group, String message) {
-		// TODO Auto-generated method stub
-		
+		// ajout message à bdd, si il y est dejà le message est lu
 	}
 
 	protected void deleteuserGBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// delete un user d'un groupe
 		
 	}
 
 	protected void adduserGBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// ajoute un user à un groupe
 		
 	}
 
 	protected void adduserBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// ajoute un user
 		
 	}
 
