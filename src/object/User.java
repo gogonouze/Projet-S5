@@ -4,17 +4,8 @@ import java.net.*;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-import java.io.*;
-import java.net.*;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-
-import javax.sql.PooledConnection;
 
 public abstract class User implements Runnable{
-	private static int nbUser = 0;
-	
-	private int id;
 	private String name;
 	ServerSocket server;
 	PrintWriter output;
@@ -24,12 +15,11 @@ public abstract class User implements Runnable{
 	private int PORT_RECEPTION;
 	Socket socket;
 	InetAddress a;
-	
+	public String getNameUser() {
+		return name;
+	}
 	public User(String name,Port_Pool p) {
 		this.name = name;
-		this.id = nbUser;
-		nbUser++;
-
 		if(p!=null) {
 		PORT_RECEPTION=p.selectPort();
 		try {
@@ -52,15 +42,6 @@ public abstract class User implements Runnable{
 		}
 		
 	}
-	
-	public String getNameUser() {
-		return name;
-	}
-	
-	public int getId() {
-		return id;
-	}
-	
 	public void createReception() {
 	}
 	public void run() {
@@ -83,13 +64,11 @@ public abstract class User implements Runnable{
 										//si cas de connection
 										if(input.startsWith("@Message@")){
 											input.replaceFirst("@Message@", "");
-												String user="";
 												String temp="";
 												String discussion="";
 												String message="";
 												for(char car : input.toCharArray()) {
 													if(car=='@') {
-														user=discussion;
 														discussion=temp;
 														temp="";
 													}
@@ -100,13 +79,13 @@ public abstract class User implements Runnable{
 												message=temp;
 												boolean exist_discussion=false;
 												for(Discussion conv : discussions) {
-													if(conv.getName()==discussion) {
+													if(conv.getId()==atoi(discussion) ){
 														conv.getMessages().add(new Message(message));
 														exist_discussion=true;
 													}
 												}
 												if(!exist_discussion) {
-													Discussion conv= new Discussion(discussion, 0, null, new Message(message));
+													Discussion conv= new Discussion("", atoi(discussion), null, new Message(message));
 													discussions.add(conv);
 													request_discussion(discussion);
 												}
@@ -114,7 +93,7 @@ public abstract class User implements Runnable{
 											}
 										else {
 											if(input.startsWith("@NewD@")){
-												input.replaceFirst("@Message@", "");
+												input.replaceFirst("@NewD@", "");
 												Group group= new Group();
 												String temp="";
 												String discussion="";
@@ -207,51 +186,39 @@ public abstract class User implements Runnable{
 			return (int) result;
 		}
 	protected void request_discussion(String discussion) {
-		output.println("@Rdiscussion@"+name+"@"+discussion);
+		output.println("@Rdiscussion@"+getPort()+"@"+discussion);
 		
 	}
 	public void connect() {
-			output.println("@Connection@"+name+"@"+PORT_RECEPTION);
+			output.println("@Connection@"+getPort()+"@"+PORT_RECEPTION);
 	}
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
-		output.println("@joinGroup@"+name+"@"+groupe.getiD_group());
+		output.println("@joinGroup@"+getPort()+"@"+groupe.getiD_group());
 		
 	}
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
-		output.println("@leaveGroup@"+name+"@"+groupe.getiD_group());
+		output.println("@leaveGroup@"+getPort()+"@"+groupe.getiD_group());
 		
 	}
 	public void sendMessage(String message ,Discussion discussion) {
 		Message temp = new Message(message);
 		discussion.getMessages().add(temp);
-		output.println("@Message@"+name+"@"+discussion.getId()+"@"+temp.getMessage());
+		output.println("@Message@"+getPort()+"@"+discussion.getId()+"@"+temp.getMessage());
 	}
 	public void createConversation( String message, String name_conv ,Group group) {
 		Message temp = new Message(message);
-		output.println("@NeWMessage@"+name_conv+"@"+name+"@"+"@"+group.toString()+"@"+temp.getMessage());
+		output.println("@NeWMessage@"+name_conv+"@"+getPort()+"@"+"@"+group.toString()+"@"+temp.getMessage());
 	}
 	public void leaveConversation (Discussion conversation) {
-		output.println("@LeaveC@"+name+"@"+conversation.getId());
+		output.println("@LeaveC@"+getPort()+"@"+conversation.getId());
 		this.discussions.remove(conversation);
 		
-	}
-	public NavigableSet<Discussion> getDiscussions() {
-		return discussions;
-	}
-	
-	public Discussion getDiscussion( ) {
-		/* TODO */ 
-		return null;
-	}
-	
-	public void debug_addDiscussion(Discussion discussion) {
-		discussions.add(discussion);
 	}
 	public int getPort() {
 		// TODO Auto-generated method stub
 		return PORT_RECEPTION;
 	}
-	
+
 }
