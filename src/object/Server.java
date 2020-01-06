@@ -15,13 +15,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Server implements Runnable{
+	
 	private static final int PORT = 8952;
 	Socket socket;
 	ServerSocket server;
+	
 	//crée le serveur
 	public Server(){
 		try {
@@ -193,12 +197,12 @@ public class Server implements Runnable{
 																	else {
 																		if(nbdot==1) {
 																			user=temp;
-																			group.group.add(getUser(user));
+																			group.group.add(getUser(atoi(user)));
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			group.group.add(getUser(temp));
+																			group.group.add(getUser(atoi(temp)));
 																			temp="";
 
 																		}
@@ -259,7 +263,7 @@ public class Server implements Runnable{
 		Socket socket;
 		PrintWriter output = null;
 		try {
-			socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
+			socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
 			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -267,13 +271,14 @@ public class Server implements Runnable{
 		output.println("@NewD@"+discussion.toString());
 	}
 	
+	// J'ai ajoute des atoi et remplace getId par getPort. Du coup dans user y a l'id/port et les ports sont differents en theorie
 	protected void retransmettreMessage(String user, String discussion, String message) {
 		Socket socket;
 		PrintWriter output = null;
-		for( User client : getDiscussion(atoi(discussion)).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getId())) {
+		for( User client : getDiscussion(atoi(discussion)).getGroup() ){
+			if(client.getNameUser()!=user && isconnected(client.getPort())) {
 				try {
-					socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -353,9 +358,9 @@ public class Server implements Runnable{
 	private Discussion getDiscussion(int id) {
 		
 		Discussion d = null;
-		String name;
+		String name = "";
 		TreeSet<Message> messages = new TreeSet<>();
-		TreeSet<User> group = new TreeSet<>() ;
+		List<User> group = new ArrayList<>() ;
 		Connection con;
 		
 		try {
@@ -388,6 +393,23 @@ public class Server implements Runnable{
 			e.printStackTrace();
 		}
 		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					group.add(getUser(rst.getInt("IdU")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		d = new Discussion(name, messages, group, id);
+		
 		return d;
 	}
 	
@@ -395,10 +417,33 @@ public class Server implements Runnable{
 		// TODO Auto-generated method stub
 		
 	}
-	private User getUser(String user) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	// actuellement tous les User sont des clients
+	private User getUser(int id) {
+		
+		User u = null;
+		String name;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Name FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					name = rst.getString("Name");	
+					u = new Client(name, null);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
 	}
+	
 	protected void refresh(String user) {
 		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "@Envoyeur@Discussion@contenu@Date" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
@@ -407,7 +452,7 @@ public class Server implements Runnable{
 		if(unviewedmessage!=null) {
 			for(String message : unviewedmessage) {
 				try {
-					socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -416,10 +461,8 @@ public class Server implements Runnable{
 				updateStatus(message,user);
 			}
 				
-			
 		}
-		
-		
+
 	}
 
 	private void updateStatus(String message, String user) {

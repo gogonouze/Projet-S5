@@ -1,14 +1,17 @@
-import java.util.TreeSet;
+package object;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Group implements Comparable<Group>{
 	private int iD_group;
-	TreeSet<User> group =new TreeSet<User>();
+	List<User> group =new ArrayList<User>();
 
 	public int getiD_group() {
 		return iD_group;
 	}
 
-	public TreeSet<User> getGroup() {
+	public List<User> getGroup() {
 		return group;
 	}
 

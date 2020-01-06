@@ -1,13 +1,19 @@
 package test;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
+import object.Client;
+import object.Discussion;
 import object.Message;
 import object.Status;
+import object.User;
 
 public class BddTest {
-
-	private static void getMessage(int id) {
+	
+	private static Message getMessage(int id) {
 		
 		Message m = null;
 		Connection con;
@@ -38,7 +44,7 @@ public class BddTest {
 			e.printStackTrace();
 		}
 		
-		System.out.println(m.toString());
+		return m;
 	}
 	
 	private static void isconnected(int id) {
@@ -77,6 +83,89 @@ public class BddTest {
 		}
 	}
 	
+	private static User getUser(int id) {
+		
+		User u = null;
+		String name;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Name FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					name = rst.getString("Name");	
+					u = new Client(name, null);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
+	}
+	
+	private static void getDiscussion(int id) {
+		
+		Discussion d = null;
+		String name = "";
+		TreeSet<Message> messages = new TreeSet<>();
+		List<User> group = new ArrayList<>() ;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "Name FROM bdd_projet_s5.discussion");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					name = rst.getString("Name");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "IdM FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					messages.add(getMessage(rst.getInt("IdM")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					group.add(getUser(rst.getInt("IdU")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		d = new Discussion(name, messages, group, id);
+		
+		System.out.println(d.toString());
+	}
+	
 	public static void main(String[] args) {
 		
 		Connection con;
@@ -97,8 +186,9 @@ public class BddTest {
 		}
 		
 		isconnected(1);
-		getMessage(1);
-		
+		//getMessage(1);
+		//getUser(1);
+		getDiscussion(1);
 	}
 	
 }

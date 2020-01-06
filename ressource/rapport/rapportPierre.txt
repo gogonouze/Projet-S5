@@ -11,5 +11,8 @@
 * Dans Message : j'ai ajouté un second constructeur qui sert à contruire un message récupéré de la BDD.
 * Dans Server : j'ai changé dans la fonction isconnected le paramètre "String nameUser" par "int id".
 * Dans Server : ligne 172 j'ai changé client.getNameUser() par client.getId() à cause du changement dans isconnected.
-* Dans Server : Dans getDiscussion j'ai changé le paramètre "String discussion" par "int id". /!\ Ligne 171 il y a une erreur à cause de ça /!\
+* Dans Server : Dans getDiscussion j'ai changé le paramètre "String discussion" par "int id".
 * Dans Server : J'ai ajouté la fontion "getMessage(int id)" qui récupère un message dans la BDD.
+* Dans Server : Dans getuser actuellement tous les user renvoyés sont client car je sais pas faire la différence entre client/opérateur.
+* Dans Server : Dans refresh j'ai changé user par atoi(user)
+* Dans group : J'ai changé le treeSet de group en ArrayList car pas besoin de trier les Users.

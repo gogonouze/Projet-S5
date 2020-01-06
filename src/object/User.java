@@ -15,9 +15,7 @@ public abstract class User implements Runnable{
 	private int PORT_RECEPTION;
 	Socket socket;
 	InetAddress a;
-	public String getNameUser() {
-		return name;
-	}
+	
 	public User(String name,Port_Pool p) {
 		this.name = name;
 		if(p!=null) {
@@ -42,8 +40,14 @@ public abstract class User implements Runnable{
 		}
 		
 	}
+	
+	public String getNameUser() {
+		return name;
+	}
+	
 	public void createReception() {
 	}
+	
 	public void run() {
 		try{
 			while(!server.isClosed()){
@@ -221,4 +225,9 @@ public abstract class User implements Runnable{
 		return PORT_RECEPTION;
 	}
 
+	@Override
+	public String toString() {
+		return "User [name=" + name + "]";
+	}
+	
 }
