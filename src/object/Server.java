@@ -1,3 +1,5 @@
+package object;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -8,7 +10,13 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 public class Server implements Runnable{
 	private static final int PORT = 8952;
@@ -224,7 +232,7 @@ public class Server implements Runnable{
 		Socket socket;
 		PrintWriter output = null;
 		for( User client : getDiscussion(discussion).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
+			if(client.getNameUser()!=user && isconnected(client.getId())) {
 				try {
 					socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
@@ -267,11 +275,83 @@ public class Server implements Runnable{
 		
 		return connected;
 	}
-
-	private Discussion getDiscussion(String discussion) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	// Permet de recuperer un message identifie avec son id dans la base de donnees
+	private Message getMessage(int id) {
+		
+		Message m = null;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				if (idM == id) {
+					String content = rst.getString("Content");
+					int isRead = rst.getInt("IsRead");
+					String time = rst.getString("Time");
+					Status status = null;
+					if (isRead == 0) {
+						status = Status.wait;
+					} else if (isRead == 1) {
+						status = Status.received;
+					} else {
+						status = Status.viewed;
+					}
+					m = new Message(content, status, time, idM);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return m;
 	}
+	
+	private Discussion getDiscussion(int id) {
+		
+		Discussion d = null;
+		String name;
+		TreeSet<Message> messages = new TreeSet<>();
+		TreeSet<User> group = new TreeSet<>() ;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "Name FROM bdd_projet_s5.discussion");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					name = rst.getString("Name");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "IdM FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					messages.add(getMessage(rst.getInt("IdM")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return d;
+	}
+	
 	protected void addDiscussion(String discussion, Group group) {
 		// TODO Auto-generated method stub
 		

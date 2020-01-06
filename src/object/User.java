@@ -12,6 +12,9 @@ import java.util.TreeSet;
 import javax.sql.PooledConnection;
 
 public abstract class User implements Runnable{
+	private static int nbUser = 0;
+	
+	private int id;
 	private String name;
 	ServerSocket server;
 	PrintWriter output;
@@ -21,11 +24,12 @@ public abstract class User implements Runnable{
 	private int PORT_RECEPTION;
 	Socket socket;
 	InetAddress a;
-	public String getNameUser() {
-		return name;
-	}
+	
 	public User(String name,Port_Pool p) {
 		this.name = name;
+		this.id = nbUser;
+		nbUser++;
+
 		if(p!=null) {
 		PORT_RECEPTION=p.selectPort();
 		try {
@@ -48,6 +52,15 @@ public abstract class User implements Runnable{
 		}
 		
 	}
+	
+	public String getNameUser() {
+		return name;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
 	public void createReception() {
 	}
 	public void run() {

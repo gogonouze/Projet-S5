@@ -2,8 +2,45 @@ package test;
 
 import java.sql.*;
 
+import object.Message;
+import object.Status;
+
 public class BddTest {
 
+	private static void getMessage(int id) {
+		
+		Message m = null;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				if (idM == id) {
+					String content = rst.getString("Content");
+					int isRead = rst.getInt("IsRead");
+					String time = rst.getString("Time");
+					Status status = null;
+					if (isRead == 0) {
+						status = Status.wait;
+					} else if (isRead == 1) {
+						status = Status.received;
+					} else {
+						status = Status.viewed;
+					}
+					m = new Message(content, status, time, idM);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(m.toString());
+	}
+	
 	private static void isconnected(int id) {
 		
 		Connection con;
@@ -59,7 +96,8 @@ public class BddTest {
 			e.printStackTrace();
 		}
 		
-		isconnected(3);
+		isconnected(1);
+		getMessage(1);
 		
 	}
 	
