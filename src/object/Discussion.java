@@ -4,10 +4,10 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 public class Discussion {
-	String name;
-	NavigableSet<Message> messages = new TreeSet<>();
-	Group group;
-	int id_Conv;
+	private String name;
+	private NavigableSet<Message> messages = new TreeSet<>();
+	private Group group;
+	private int id_Conv;
 	
 	public Discussion(String name, int id, Group group, Message message) {
 		this.name = name;
@@ -31,4 +31,5 @@ public class Discussion {
 	public String getName() {
 		return name;
 	}
+	
 }

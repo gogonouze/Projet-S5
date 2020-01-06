@@ -15,22 +15,33 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import java.util.NavigableSet;
+
 import javax.swing.Action;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.ListSelectionModel;
+import javax.swing.JTextPane;
+import javax.swing.ListModel;
 
 public class Gui {
 	
-	
+	private JTextArea textArea_1;
 	private JFrame frame;
+	private User user;
+	private JList list;
+	private ListModel model = (ListModel) user.getDiscussions();
+	
 	/**
 	 * Launch the application.
 	 */
-	public static void launch(String[] args) {
+	public static void launch(User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Gui window = new Gui();
+					Gui window = new Gui(user);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -42,7 +53,8 @@ public class Gui {
 	/**
 	 * Create the application.
 	 */
-	public Gui() {
+	public Gui(User user) {
+		this.user = user;
 		initialize();
 	}
 
@@ -63,7 +75,8 @@ public class Gui {
 		JButton btnNewButton = new JButton("New button");
 		panel_1.add(btnNewButton);
 		
-		JList list = new JList();
+		list = new JList();		
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		panel.add(list, BorderLayout.CENTER);
 		
 		JPanel panel_2 = new JPanel();
@@ -85,5 +98,18 @@ public class Gui {
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		panel_3.add(textArea, BorderLayout.CENTER);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		panel_2.add(scrollPane, BorderLayout.CENTER);
+		
+		textArea_1 = new JTextArea();
+		textArea_1.setEnabled(false);
+		textArea_1.setLineWrap(true);
+		textArea_1.setWrapStyleWord(true);
+		scrollPane.setViewportView(textArea_1);
+		
+		list.setModel(model);
 	}
 }
