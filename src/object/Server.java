@@ -1,4 +1,3 @@
-package object;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,11 +8,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 
 public class Server implements Runnable{
@@ -48,20 +42,8 @@ public class Server implements Runnable{
 										//si cas de connection
 										if(input.startsWith("@Connection@")){
 											input.replaceFirst("@Connection@", "");
-											String user="";
-											String ip_Adress="";
-											String temp="";
-											for(char car : input.toCharArray()) {
-												if(car=='@') {
-													user=temp;
-													temp="";
-												}
-												else {
-													temp.concat(Character.toString(car));
-												}
-											}
-											ip_Adress=temp;
-											connect_user(user,ip_Adress);
+											String user=input;
+											connect_user(user);
 											refresh(user);
 										}
 										else {
@@ -145,6 +127,65 @@ public class Server implements Runnable{
 															updateLeaveConv(user,discussion);
 
 													}
+														//Cr√©er une conversation
+														if(input.startsWith("@NeWMessage@")) {
+															input.replaceFirst("@NeWMessage@", "");
+															Group group= new Group();
+															String user="";
+															String temp="";
+															String discussion="";
+															String message="";
+															int nbdot =0;
+															for(char car : input.toCharArray()) {
+																if(car=='@') {
+																	if(nbdot==0) {
+																		discussion=temp;
+																		temp="";
+																		nbdot++;
+																	}
+																	else {
+																		if(nbdot==1) {
+																			user=temp;
+																			group.group.add(getUser(user));
+																			nbdot++;
+																			temp="";
+																		}
+																		else {
+																			group.group.add(getUser(temp));
+																			temp="";
+
+																		}
+																	}
+																}
+																else {
+																	temp.concat(Character.toString(car));
+																}
+															}
+															message=temp;
+															addDiscussion(discussion,group);
+															updateBDDMessage(user,discussion,message);
+															retransmettreMessage(user,discussion,message);
+														}
+														else {
+															if(input.startsWith("@Rdiscussion@")) {
+																input.replaceFirst("@Rdiscussion@", "");
+																String user="";
+																String temp="";
+																String discussion="";
+																for(char car : input.toCharArray()) {
+																	if(car=='@') {
+																		user=temp;
+																		temp="";
+																	}
+																	else {
+																		temp.concat(Character.toString(car));
+																	}
+																}
+																discussion=temp;
+																giveDiscussion(getDiscussion(discussion),user);
+																
+															}
+														}
 												}
 											}
 										}
@@ -159,24 +200,38 @@ public class Server implements Runnable{
 							socket.close();
 						} catch (IOException e) {e.printStackTrace();}
 					}
+
+					
 				});
 				t.start();
 			}
 		}catch (IOException e){e.printStackTrace();}
 	}
 	
+	protected void giveDiscussion(Discussion discussion, String user) {
+		Socket socket;
+		PrintWriter output = null;
+		try {
+			socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
+			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		output.println("@NewD@"+discussion.toString());
+	}
+	
 	protected void retransmettreMessage(String user, String discussion, String message) {
 		Socket socket;
 		PrintWriter output = null;
 		for( User client : getDiscussion(discussion).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getId())) {
+			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
 				try {
-					socket = new Socket(getIp(client.getNameUser()),PORT);//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				output.println(message);
+				output.println("@Message@"+user+"@"+discussion+"@"+message);
 				updateStatus(message,user);
 				
 			}
@@ -217,21 +272,31 @@ public class Server implements Runnable{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	protected void addDiscussion(String discussion, Group group) {
+		// TODO Auto-generated method stub
+		
+	}
+	private User getUser(String user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	protected void refresh(String user) {
 		//renvoie tout les message non lus renvoy√©s par getAllUnviewedMessage sous la forme "@Envoyeur@Discussion@contenu@Date" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
 		Socket socket;
 		PrintWriter output = null;
-		for(String message : unviewedmessage) {
+		if(unviewedmessage!=null) {
+			for(String message : unviewedmessage) {
 				try {
-					socket = new Socket(getIp(user),PORT);//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(user).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				output.println(message);
+				output.println("@Message@"+user+"@"+message);
 				updateStatus(message,user);
+			}
+				
 			
 		}
 		
@@ -259,7 +324,7 @@ public class Server implements Runnable{
 	}
 
 	protected void updateBDDMessage(String user, String group, String message) {
-		// ajout message ‡ bdd, si il y est dej‡ le message est lu
+		// ajout message √† bdd, si il y est dej√† le message est lu
 	}
 
 	protected void deleteuserGBDD(String user, String group) {
@@ -268,7 +333,7 @@ public class Server implements Runnable{
 	}
 
 	protected void adduserGBDD(String user, String group) {
-		// ajoute un user ‡ un groupe
+		// ajoute un user √† un groupe
 		
 	}
 
