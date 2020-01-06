@@ -31,5 +31,8 @@ public class Discussion {
 	public String getName() {
 		return name;
 	}
+	public void setGroup(Group group) {
+		this.group = group;
+	}
 	
 }
