@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  mar. 07 jan. 2020 à 10:31
+-- Généré le :  mar. 07 jan. 2020 à 12:26
 -- Version du serveur :  10.4.10-MariaDB
 -- Version de PHP :  7.3.12
 
@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   `Content` varchar(3000) NOT NULL,
   `IsRead` int(1) NOT NULL,
   `Time` varchar(50) NOT NULL,
+  `NbVu` int(11) DEFAULT NULL,
   `IdU` int(11) NOT NULL,
   `IdD` int(11) NOT NULL,
   PRIMARY KEY (`IdM`),
@@ -126,9 +127,9 @@ CREATE TABLE IF NOT EXISTS `message` (
 -- Déchargement des données de la table `message`
 --
 
-INSERT INTO `message` (`IdM`, `Content`, `IsRead`, `Time`, `IdU`, `IdD`) VALUES
-(1, 'Salut à tous les amis !', 0, '2020/01/06 20:35:56', 1, 1),
-(2, 'Je suis de retour !', 1, '2020/01/06 19:23:50', 2, 1);
+INSERT INTO `message` (`IdM`, `Content`, `IsRead`, `Time`, `NbVu`, `IdU`, `IdD`) VALUES
+(1, 'Salut à tous les amis !', 1, '2020/01/06 20:35:56', 1, 1, 1),
+(2, 'Je suis de retour !', 1, '2020/01/06 19:23:50', 0, 2, 1);
 
 -- --------------------------------------------------------
 
