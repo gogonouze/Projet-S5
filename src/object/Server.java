@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -259,7 +260,7 @@ public class Server implements Runnable{
 	}
 	
 	
-protected void giveDiscussion(Discussion discussion, String user) {
+	protected void giveDiscussion(Discussion discussion, String user) {
 		try {
 			for (User u : communication.keySet()) {
 				if(u.getNameUser().equals(user)) {
@@ -454,7 +455,7 @@ protected void giveDiscussion(Discussion discussion, String user) {
 		}
 		
 		for (User u : group.getGroup()) {
-			idU = u.getPort();
+			idU = u.getId();
 			try {
 				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 				Statement stmt = con.createStatement();
@@ -602,10 +603,38 @@ protected void giveDiscussion(Discussion discussion, String user) {
 		
 	}
 
-	protected void adduserBDD(String user, String group) {
-		// ajoute un user, pas dans la bdd ? On l'ajoute
-		// Pourquoi group ?
+	protected int adduserBDD(String user) {
 		
+		Connection con;
+		int nbu = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbU FROM bdd_projet_s5.user");
+			if (rst.next()) {
+				System.out.println("Dans le if");
+				nbu = rst.getInt("NbU") + 1;
+			}
+			else {
+				System.out.println("Dans le else");
+				nbu = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO user (IdU, Name, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + 1 + "')");
+			stmt.executeUpdate("UPDATE user SET nbU = " + nbu);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbu;
 	}
 
 	protected void connect_user(String user, Socket s) throws IOException {

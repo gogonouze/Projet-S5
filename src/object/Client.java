@@ -7,8 +7,8 @@ public class Client extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Client(String name) {
-		super(name);
+	public Client(String name, int id) {
+		super(name, id);
 		// TODO Auto-generated constructor stub
 	}
 	

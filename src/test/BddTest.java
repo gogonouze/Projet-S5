@@ -277,6 +277,40 @@ public class BddTest {
 		}
 	}
 	
+	private static int adduserBDD(String user) {
+		
+		Connection con;
+		int nbu = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbU FROM bdd_projet_s5.user");
+			if (rst.next()) {
+				System.out.println("Dans le if");
+				nbu = rst.getInt("NbU") + 1;
+			}
+			else {
+				System.out.println("Dans le else");
+				nbu = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO user (IdU, Name, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + 1 + "')");
+			stmt.executeUpdate("UPDATE user SET nbU = " + nbu);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbu;
+	}
+	
 	public static void main(String[] args) {
 		
 		isconnected(1);
@@ -290,9 +324,12 @@ public class BddTest {
 		System.out.println(g.toString());
 		//addDiscussion("Projet", g, 2);
 		
-		updateStatus("1", "1");
-		updateStatus("1", "1");
+		//updateStatus("1", "1");
+		//updateStatus("1", "1");
 		
+		adduserBDD("Maxime");
+		User u = getUser(1);
+		System.out.println(u.toString());
 	}
 	
 }

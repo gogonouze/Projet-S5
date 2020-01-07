@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 
 public abstract class User implements Runnable{
+	private int id;
 	private String name;
 	OutputStreamWriter output;
 	BufferedReader input ;
@@ -26,13 +27,22 @@ public abstract class User implements Runnable{
 
 	}
 
-	public User(String name, int PORT_RECEPTION) {
-		super();
+	public User(String name, int id) {
 		this.name = name;
-		this.PORT_RECEPTION = PORT_RECEPTION;
+		this.id = id;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
 
+	public int getId() {
+		return id;
+	}
+
+	public static int getPort() {
+		return PORT;
+	}
 
 	public String getNameUser() {
 		return name;
