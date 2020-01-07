@@ -94,9 +94,7 @@ public class Server implements Runnable{
 										//si cas de connection
 										if(input.startsWith("@Connection@")){
 											String user=input.replaceFirst("@Connection@","");
-											System.out.println(user);
 											connect_user(user, socket);
-											refresh(user);
 										}
 										else {
 											//tentative de rejoindre un groupe
@@ -236,6 +234,12 @@ public class Server implements Runnable{
 																discussion=temp;
 																giveDiscussion(getDiscussion(discussion),user);
 																
+															}
+															else {
+																if(input.startsWith("@Refresh@")){
+																	input=input.replaceFirst("@Refresh@", "");
+																	refresh(input);
+																}
 															}
 														}
 												}
