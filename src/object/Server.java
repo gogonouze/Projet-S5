@@ -1,4 +1,5 @@
 package object;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,12 +10,22 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 public class Server implements Runnable{
+	
 	private static final int PORT = 8952;
 	Socket socket;
 	ServerSocket server;
+	
 	//crée le serveur
 	public Server(){
 		try {
@@ -22,6 +33,45 @@ public class Server implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int atoi(String str) {
+		if (str == null || str.length() < 1)
+			return 0;
+	 
+		// trim white spaces
+		str = str.trim();
+	 
+		char flag = '+';
+	 
+		// check negative or positive
+		int i = 0;
+		if (str.charAt(0) == '-') {
+			flag = '-';
+			i++;
+		} else if (str.charAt(0) == '+') {
+			i++;
+		}
+		// use double to store result
+		double result = 0;
+	 
+		// calculate value
+		while (str.length() > i && str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+			result = result * 10 + (str.charAt(i) - '0');
+			i++;
+		}
+	 
+		if (flag == '-')
+			result = -result;
+	 
+		// handle max and min
+		if (result > Integer.MAX_VALUE)
+			return Integer.MAX_VALUE;
+	 
+		if (result < Integer.MIN_VALUE)
+			return Integer.MIN_VALUE;
+	 
+		return (int) result;
 	}
 	
 	public void run() {
@@ -43,20 +93,8 @@ public class Server implements Runnable{
 										//si cas de connection
 										if(input.startsWith("@Connection@")){
 											input.replaceFirst("@Connection@", "");
-											String user="";
-											String ip_Adress="";
-											String temp="";
-											for(char car : input.toCharArray()) {
-												if(car=='@') {
-													user=temp;
-													temp="";
-												}
-												else {
-													temp.concat(Character.toString(car));
-												}
-											}
-											ip_Adress=temp;
-											connect_user(user,ip_Adress);
+											String user=input;
+											connect_user(user);
 											refresh(user);
 										}
 										else {
@@ -140,6 +178,65 @@ public class Server implements Runnable{
 															updateLeaveConv(user,discussion);
 
 													}
+														//Créer une conversation
+														if(input.startsWith("@NeWMessage@")) {
+															input.replaceFirst("@NeWMessage@", "");
+															Group group= new Group();
+															String user="";
+															String temp="";
+															String discussion="";
+															String message="";
+															int nbdot =0;
+															for(char car : input.toCharArray()) {
+																if(car=='@') {
+																	if(nbdot==0) {
+																		discussion=temp;
+																		temp="";
+																		nbdot++;
+																	}
+																	else {
+																		if(nbdot==1) {
+																			user=temp;
+																			group.group.add(getUser(atoi(user)));
+																			nbdot++;
+																			temp="";
+																		}
+																		else {
+																			group.group.add(getUser(atoi(temp)));
+																			temp="";
+
+																		}
+																	}
+																}
+																else {
+																	temp.concat(Character.toString(car));
+																}
+															}
+															message=temp;
+															addDiscussion(discussion,group);
+															updateBDDMessage(user,discussion,message);
+															retransmettreMessage(user,discussion,message);
+														}
+														else {
+															if(input.startsWith("@Rdiscussion@")) {
+																input.replaceFirst("@Rdiscussion@", "");
+																String user="";
+																String temp="";
+																String discussion="";
+																for(char car : input.toCharArray()) {
+																	if(car=='@') {
+																		user=temp;
+																		temp="";
+																	}
+																	else {
+																		temp.concat(Character.toString(car));
+																	}
+																}
+																discussion=temp;
+																giveDiscussion(getDiscussion(atoi(discussion)),user);
+																
+															}
+														}
 												}
 											}
 										}
@@ -154,24 +251,39 @@ public class Server implements Runnable{
 							socket.close();
 						} catch (IOException e) {e.printStackTrace();}
 					}
+
+					
 				});
 				t.start();
 			}
 		}catch (IOException e){e.printStackTrace();}
 	}
 	
+	protected void giveDiscussion(Discussion discussion, String user) {
+		Socket socket;
+		PrintWriter output = null;
+		try {
+			socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
+			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		output.println("@NewD@"+discussion.toString());
+	}
+	
+	// J'ai ajoute des atoi et remplace getId par getPort. Du coup dans user y a l'id/port et les ports sont differents en theorie
 	protected void retransmettreMessage(String user, String discussion, String message) {
 		Socket socket;
 		PrintWriter output = null;
-		for( User client : getDiscussion(discussion).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
+		for( User client : getDiscussion(atoi(discussion)).getGroup() ){
+			if(client.getNameUser()!=user && isconnected(client.getPort())) {
 				try {
-					socket = new Socket(getIp(client.getNameUser()),PORT);//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				output.println(message);
+				output.println("@Message@"+user+"@"+discussion+"@"+message);
 				updateStatus(message,user);
 				
 			}
@@ -179,78 +291,264 @@ public class Server implements Runnable{
 		
 	}
 
-	private boolean isconnected(String nameUser) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isconnected(int id) {
+		
+		Connection con;
+		Boolean connected = false;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IsConnected FROM bdd_projet_s5.user");
+			
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (id == idU) {
+					if (rst.getInt("IsConnected") == 1){
+						connected = true;
+					}
+					else {
+						connected = false;
+					}
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return connected;
 	}
-
-	private Discussion getDiscussion(String discussion) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	// Permet de recuperer un message identifie avec son id dans la base de donnees
+	private Message getMessage(int id) {
+		
+		Message m = null;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				if (idM == id) {
+					String content = rst.getString("Content");
+					int isRead = rst.getInt("IsRead");
+					String time = rst.getString("Time");
+					Status status = null;
+					if (isRead == 0) {
+						status = Status.wait;
+					} else if (isRead == 1) {
+						status = Status.received;
+					} else {
+						status = Status.viewed;
+					}
+					m = new Message(content, status, time, idM);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return m;
 	}
-
+	
+	private Discussion getDiscussion(int id) {
+		
+		Discussion d = null;
+		String name = "";
+		TreeSet<Message> messages = new TreeSet<>();
+		List<User> group = new ArrayList<>() ;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "Name FROM bdd_projet_s5.discussion");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					name = rst.getString("Name");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdD ," + "IdM FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					messages.add(getMessage(rst.getInt("IdM")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idD = rst.getInt("IdD");
+				if (idD == id) {
+					group.add(getUser(rst.getInt("IdU")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		d = new Discussion(name, messages, group, id);
+		
+		return d;
+	}
+	
+	protected void addDiscussion(String discussion, Group group, int id) {
+		
+		Connection con;
+		int idU;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO discussion (IdD, Name) VALUES ('" + id + "', '" + discussion + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		for (User u : group.getGroup()) {
+			idU = u.getPort();
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("INSERT INTO appartenirud (IdU, IdD) VALUES ('" + idU + "', '" + id + "')");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// actuellement tous les User sont des clients
+	private User getUser(int id) {
+		
+		User u = null;
+		String name;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Name FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					name = rst.getString("Name");	
+					u = new Client(name, id);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
+	}
+	
 	protected void refresh(String user) {
 		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "@Envoyeur@Discussion@contenu@Date" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
 		Socket socket;
 		PrintWriter output = null;
-		for(String message : unviewedmessage) {
+		if(unviewedmessage!=null) {
+			for(String message : unviewedmessage) {
 				try {
-					socket = new Socket(getIp(user),PORT);//"192.168.43.95", PORT);
+					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
 					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				output.println(message);
+				output.println("@Message@"+user+"@"+message);
 				updateStatus(message,user);
-			
+			}
+				
 		}
-		
-		
+
 	}
 
 	private void updateStatus(String message, String user) {
-		// TODO Auto-generated method stub
+		// cet user a lu ce message
+		int m = atoi(message);
+		int u = atoi(user);
+		Connection con;
 		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "IdU FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				int idU = rst.getInt("IdU");
+				if (idM == m && idU == u) {
+					
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String getIp(String user) {
 		// TODO Auto-generated method stub
+		// C'est quoi cette Ip ?
 		return null;
 	}
 
 	private LinkedList<String> getAllUnviewedMessage(String user) {
 		// TODO Auto-generated method stub
+		// C'est pas personnel les message non vu 
 		return null;
 	}
 
 	protected void updateLeaveConv(String user, String discussion) {
 		// TODO Auto-generated method stub
-		
+		// Mais c'est une conv de groupe, tu dois pas quiter le groupe ?
 	}
 
 	protected void updateBDDMessage(String user, String group, String message) {
-		// TODO Auto-generated method stub
-		
+		// ajout message à bdd, si il y est dejà le message est lu
+		// Il est lu pour tout le monde
 	}
 
 	protected void deleteuserGBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// delete un user d'un groupe
 		
 	}
 
 	protected void adduserGBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// ajoute un user à un groupe
 		
 	}
 
 	protected void adduserBDD(String user, String group) {
-		// TODO Auto-generated method stub
+		// ajoute un user
+		// Pourquoi group ?
 		
 	}
 
 	protected void connect_user(String user, String ip_Adress) {
 		// TODO Auto-generated method stub
+		// Pourquoi ip_Adress ?
 		
 	}
 
