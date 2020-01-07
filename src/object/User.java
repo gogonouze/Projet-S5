@@ -7,36 +7,21 @@ import java.util.TreeSet;
 
 public abstract class User implements Runnable{
 	private String name;
-	ServerSocket server;
-	PrintWriter output;
+	OutputStreamWriter output;
+	BufferedReader input ;
 	NavigableSet<Group> groups = new TreeSet<Group>() ;
 	NavigableSet<Discussion> discussions= new TreeSet<Discussion>();
 	private static final int PORT = 8952;
 	private int PORT_RECEPTION;
 	Socket socket;
-	InetAddress a;
 
-	public User(String name,Port_Pool p) {
+	public User(String name) {
 		this.name = name;
-		if(p!=null) {
-			PORT_RECEPTION=p.selectPort();
-			try {
-				socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
-				output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				server = new ServerSocket(PORT_RECEPTION);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				 a =InetAddress.getLocalHost();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
+			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -53,112 +38,6 @@ public abstract class User implements Runnable{
 		return name;
 	}
 
-	public void createReception() {
-	}
-
-	public void run() {
-		try{
-			while(!server.isClosed()){
-				socket = server.accept();
-				Thread t = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try{
-							BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-							boolean socketOuvert = true;
-							while (socketOuvert) {
-								try{
-									String input = plec.readLine();
-									if(input != null)
-									{
-										System.out.println(name);
-										System.out.println("Message recu : "+input);
-										//si cas de connection
-										if(input.startsWith("@Message@")){
-											input.replaceFirst("@Message@", "");
-												String temp="";
-												String discussion="";
-												String message="";
-												for(char car : input.toCharArray()) {
-													if(car=='@') {
-														discussion=temp;
-														temp="";
-													}
-													else {
-														temp.concat(Character.toString(car));
-													}
-												}
-												message=temp;
-												boolean exist_discussion=false;
-												for(Discussion conv : discussions) {
-													if(conv.getId()==atoi(discussion) ){
-														conv.getMessages().add(new Message(message));
-														exist_discussion=true;
-													}
-												}
-												if(!exist_discussion) {
-													Discussion conv= new Discussion("", atoi(discussion), null, new Message(message));
-													discussions.add(conv);
-													request_discussion(discussion);
-												}
-
-											}
-										else {
-											if(input.startsWith("@NewD@")){
-												input.replaceFirst("@NewD@", "");
-												Group group= new Group();
-												String temp="";
-												String discussion="";
-												String id_conv="";
-												int nb_dot=0;
-												for(char car : input.toCharArray()) {
-													if(car=='@') {
-														if(nb_dot==0) {
-															discussion=temp;
-															temp="";
-															nb_dot++;
-														}
-														else {
-															if(nb_dot==1) {
-																id_conv=temp;
-																nb_dot++;
-																temp="";
-															}
-															else {
-																group.group.add(new Client(temp,null));
-																temp="";
-
-															}
-														}
-													}
-													else {
-														temp.concat(Character.toString(car));
-													}
-												}
-												for(Discussion conv : discussions) {
-													if (conv.getName()==discussion) {
-														conv.group=group;
-														conv.id_Conv=atoi(id_conv);
-													}
-												}
-											}
-										}
-
-
-										}
-								}catch(SocketException se){
-									socketOuvert=false;
-								}
-							}
-							socket.close();
-						} catch (IOException e) {e.printStackTrace();}
-					}
-
-				});
-				t.start();
-			}
-		}catch (IOException e){e.printStackTrace();}
-	}
 		public int atoi(String str) {
 			if (str == null || str.length() < 1)
 				return 0;
@@ -199,24 +78,52 @@ public abstract class User implements Runnable{
 		}
 
 	protected void request_discussion(String discussion) {
-		output.println("@Rdiscussion@"+getPort()+"@"+discussion);
+		output.write("@Rdiscussion@"+name+"@"+discussion);
 
 	}
 
 	public void connect() {
-			output.println("@Connection@"+getPort()+"@"+PORT_RECEPTION);
+		String command="";	
+		System.out.println(socket.toString());
+		command="@Connection@"+name;
+				try {
+					output.write(command +"\n");
+					output.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+		String reponse="";
+		System.out.println(input.toString());
+		try {
+			reponse = input.readLine();
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
-		output.println("@joinGroup@"+getPort()+"@"+groupe.getiD_group());
-
+		try {
+			output.write("@joinGroup@"+name+"@"+groupe.getiD_group());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
-		output.println("@leaveGroup@"+getPort()+"@"+groupe.getiD_group());
-
+		try {
+			output.write("@leaveGroup@"+name+"@"+groupe.getiD_group());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void sendMessage(String message ,Discussion discussion) {
@@ -227,18 +134,22 @@ public abstract class User implements Runnable{
 	
 	public void createConversation( String message, String name_conv ,Group group) {
 		Message temp = new Message(message);
-		output.println("@NeWMessage@"+name_conv+"@"+getPort()+"@"+"@"+group.toString()+"@"+temp.getMessage());
+		try {
+			output.write("@NeWMessage@"+name_conv+"@"+name+"@"+"@"+group.toString()+"@"+temp.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
 	public void leaveConversation (Discussion conversation) {
-		output.println("@LeaveC@"+getPort()+"@"+conversation.getId());
+		try {
+			output.write("@LeaveC@"+name+"@"+conversation.getId());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.discussions.remove(conversation);
-
-	}
-	
-	public int getPort() {
-		// TODO Auto-generated method stub
-		return PORT_RECEPTION;
+		
 	}
 
 	@Override
