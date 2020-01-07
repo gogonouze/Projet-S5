@@ -13,12 +13,12 @@ public abstract class User {
 	private static final int PORT = 8952;
 	private Socket socket;
 	
-	public String getNameUser() {
-		return name;
-	}
-	
 	public User(String name) {
 		this.name = name;
+	}
+	
+	public String getNameUser() {
+		return name;
 	}
 	
 	public void connect() {
