@@ -329,13 +329,14 @@ public class Server implements Runnable{
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time FROM bdd_projet_s5.message");
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time ," + "NbVu FROM bdd_projet_s5.message");
 			while (rst.next()) {
 				int idM = rst.getInt("IdM");
 				if (idM == id) {
 					String content = rst.getString("Content");
 					int isRead = rst.getInt("IsRead");
 					String time = rst.getString("Time");
+					int nbVu = rst.getInt("NbVu");
 					Status status = null;
 					if (isRead == 0) {
 						status = Status.wait;
@@ -344,7 +345,7 @@ public class Server implements Runnable{
 					} else {
 						status = Status.viewed;
 					}
-					m = new Message(content, status, time, idM);
+					m = new Message(content, status, time, idM, nbVu);
 				}
 			}
 			
@@ -485,26 +486,49 @@ public class Server implements Runnable{
 
 	}
 
+	// Les deux String doivent correspondre aux id. String user sert à rien
 	private void updateStatus(String message, String user) {
-		// cet user a lu ce message
-		int m = atoi(message);
-		int u = atoi(user);
+		int idm = atoi(message);
+		int idd = 0;
+		Message m = getMessage(idm);
+		System.out.println("getmessage nbvu = " + m.getNbVu());
 		Connection con;
+		Connection con2;
 		
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "IdU FROM bdd_projet_s5.message");
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "IdD FROM bdd_projet_s5.message");
 			while (rst.next()) {
 				int idM = rst.getInt("IdM");
-				int idU = rst.getInt("IdU");
-				if (idM == m && idU == u) {
-					
+				if (idM == m.getId()) {
+					idd = rst.getInt("IdD");
 				}
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		
+		if (m.received(getDiscussion(idd).getGroup().size())) {
+			System.out.println("dans le if");
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("UPDATE message SET IsRead = 1 WHERE IdM = " + idm);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("Dans le else");
+			try {
+				con2 = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con2.createStatement();
+				stmt.executeUpdate("UPDATE message SET NbVu = " + m.getNbVu() + " WHERE IdM = " + idm);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -541,7 +565,7 @@ public class Server implements Runnable{
 	}
 
 	protected void adduserBDD(String user, String group) {
-		// ajoute un user
+		// ajoute un user, pas dans la bdd ? On l'ajoute
 		// Pourquoi group ?
 		
 	}

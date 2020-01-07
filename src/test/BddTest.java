@@ -14,6 +14,45 @@ import object.User;
 
 public class BddTest {
 	
+	public static int atoi(String str) {
+		if (str == null || str.length() < 1)
+			return 0;
+	 
+		// trim white spaces
+		str = str.trim();
+	 
+		char flag = '+';
+	 
+		// check negative or positive
+		int i = 0;
+		if (str.charAt(0) == '-') {
+			flag = '-';
+			i++;
+		} else if (str.charAt(0) == '+') {
+			i++;
+		}
+		// use double to store result
+		double result = 0;
+	 
+		// calculate value
+		while (str.length() > i && str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+			result = result * 10 + (str.charAt(i) - '0');
+			i++;
+		}
+	 
+		if (flag == '-')
+			result = -result;
+	 
+		// handle max and min
+		if (result > Integer.MAX_VALUE)
+			return Integer.MAX_VALUE;
+	 
+		if (result < Integer.MIN_VALUE)
+			return Integer.MIN_VALUE;
+	 
+		return (int) result;
+	}
+	
 	private static Message getMessage(int id) {
 		
 		Message m = null;
@@ -22,13 +61,14 @@ public class BddTest {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time FROM bdd_projet_s5.message");
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "Content ," + "IsRead ," + "Time ," + "NbVu FROM bdd_projet_s5.message");
 			while (rst.next()) {
 				int idM = rst.getInt("IdM");
 				if (idM == id) {
 					String content = rst.getString("Content");
 					int isRead = rst.getInt("IsRead");
 					String time = rst.getString("Time");
+					int nbVu = rst.getInt("NbVu");
 					Status status = null;
 					if (isRead == 0) {
 						status = Status.wait;
@@ -37,7 +77,7 @@ public class BddTest {
 					} else {
 						status = Status.viewed;
 					}
-					m = new Message(content, status, time, idM);
+					m = new Message(content, status, time, idM, nbVu);
 				}
 			}
 			
@@ -109,7 +149,7 @@ public class BddTest {
 		return u;
 	}
 	
-	private static void getDiscussion(int id) {
+	private static Discussion getDiscussion(int id) {
 		
 		Discussion d = null;
 		String name = "";
@@ -164,7 +204,7 @@ public class BddTest {
 		
 		d = new Discussion(name, messages, group, id);
 		
-		System.out.println(d.toString());
+		return d;
 	}
 
 	private static void addDiscussion(String discussion, Group group, int id) {
@@ -192,17 +232,66 @@ public class BddTest {
 		}
 	}
 	
+	private static void updateStatus(String message, String user) {
+		int idm = atoi(message);
+		int idd = 0;
+		Message m = getMessage(idm);
+		System.out.println("getmessage nbvu = " + m.getNbVu());
+		Connection con;
+		Connection con2;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "IdD FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				if (idM == m.getId()) {
+					idd = rst.getInt("IdD");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if (m.received(getDiscussion(idd).getGroup().size())) {
+			System.out.println("dans le if");
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("UPDATE message SET IsRead = 1 WHERE IdM = " + idm);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("Dans le else");
+			try {
+				con2 = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con2.createStatement();
+				stmt.executeUpdate("UPDATE message SET NbVu = " + m.getNbVu() + " WHERE IdM = " + idm);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
 		
 		isconnected(1);
 		//getMessage(1);
 		//getUser(1);
-		getDiscussion(1);
+		//getDiscussion(1);
+		
 		Group g = new Group();
 		g.group.add(getUser(1));
 		g.group.add(getUser(2));
 		System.out.println(g.toString());
-		addDiscussion("Projet", g, 2);
+		//addDiscussion("Projet", g, 2);
+		
+		updateStatus("1", "1");
+		updateStatus("1", "1");
 		
 	}
 	
