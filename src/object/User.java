@@ -15,16 +15,19 @@ public abstract class User implements Runnable{
 	private static final int PORT = 8952;
 	private int PORT_RECEPTION;
 	Socket socket;
-
+	Timer t= new Timer();
 	public User(String name) {
 		this.name = name;
 		try {
 			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
-			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+			socket.getKeepAlive();
+			output = new OutputStreamWriter(socket.getOutputStream());
+			input =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		
 	}
 
 	public User(String name, int id) {
@@ -87,14 +90,13 @@ public abstract class User implements Runnable{
 			return (int) result;
 		}
 
-	protected void request_discussion(String discussion) {
+	protected void request_discussion(String discussion) throws IOException {
 		output.write("@Rdiscussion@"+name+"@"+discussion);
-
+		
 	}
 
 	public void connect() {
 		String command="";	
-		System.out.println(socket.toString());
 		command="@Connection@"+name;
 				try {
 					output.write(command +"\n");
@@ -105,13 +107,13 @@ public abstract class User implements Runnable{
 				}
 			
 		String reponse="";
-		System.out.println(input.toString());
 		try {
 			reponse = input.readLine();
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		t.schedule(new Refresh(),1,5);
 	}
 	
 	public void joinGroup(Group groupe) {
@@ -173,6 +175,33 @@ public abstract class User implements Runnable{
 	
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
+	}
+	private class Refresh extends TimerTask {
+
+		@Override
+		public void run() {
+			String command="@Refresh@"+name;
+					try {
+						output.write(command +"\n");
+						output.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+			String reponse="";
+			while(!reponse.equals(".")) {
+				try {
+					reponse = input.readLine();
+					System.out.println(reponse);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
 	}
 	
 }
