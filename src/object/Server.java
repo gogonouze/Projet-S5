@@ -21,11 +21,10 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class Server implements Runnable{
-	
 	private static final int PORT = 8952;
 	Socket socket;
 	ServerSocket server;
-	
+	HashMap<User, BufferedWriter> communication= new HashMap<User, BufferedWriter>();
 	//crée le serveur
 	public Server(){
 		try {
@@ -34,6 +33,7 @@ public class Server implements Runnable{
 			e.printStackTrace();
 		}
 	}
+	
 	
 	public int atoi(String str) {
 		if (str == null || str.length() < 1)
@@ -92,15 +92,15 @@ public class Server implements Runnable{
 										System.out.println("Message recu : "+input);
 										//si cas de connection
 										if(input.startsWith("@Connection@")){
-											input.replaceFirst("@Connection@", "");
-											String user=input;
-											connect_user(user);
+											String user=input.replaceFirst("@Connection@","");
+											System.out.println(user);
+											connect_user(user, socket);
 											refresh(user);
 										}
 										else {
 											//tentative de rejoindre un groupe
 											if(input.startsWith("@joinGroup@")){
-												input.replaceFirst("@joinGroup@", "");
+												input=input.replaceFirst("@joinGroup@", "");
 												String user="";
 												String temp="";
 												String group="";
@@ -119,7 +119,7 @@ public class Server implements Runnable{
 											else {
 												//quitte un groupe
 												if(input.startsWith("@leaveGroup@")){
-													input.replaceFirst("@leaveGroup@", "");
+													input=input.replaceFirst("@leaveGroup@", "");
 													String user="";
 													String temp="";
 													String group="";
@@ -138,7 +138,7 @@ public class Server implements Runnable{
 												else {
 													//message envoyé le serveur va retransmettre le message
 													if(input.startsWith("@Message@")){
-														input.replaceFirst("@Message@", "");
+														input=input.replaceFirst("@Message@", "");
 														String user="";
 														String temp="";
 														String discussion="";
@@ -161,7 +161,7 @@ public class Server implements Runnable{
 													else {
 														//Quitte une conversation
 														if(input.startsWith("@LeaveC@")){
-															input.replaceFirst("@LeaveC@", "");
+															input=input.replaceFirst("@LeaveC@", "");
 															String user="";
 															String temp="";
 															String discussion="";
@@ -180,7 +180,7 @@ public class Server implements Runnable{
 													}
 														//Créer une conversation
 														if(input.startsWith("@NeWMessage@")) {
-															input.replaceFirst("@NeWMessage@", "");
+															input=input.replaceFirst("@NeWMessage@", "");
 															Group group= new Group();
 															String user="";
 															String temp="";
@@ -197,12 +197,12 @@ public class Server implements Runnable{
 																	else {
 																		if(nbdot==1) {
 																			user=temp;
-																			group.group.add(getUser(atoi(user)));
+																			group.group.add(getUser(user));
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			group.group.add(getUser(atoi(temp)));
+																			group.group.add(getUser(temp));
 																			temp="";
 
 																		}
@@ -219,7 +219,7 @@ public class Server implements Runnable{
 														}
 														else {
 															if(input.startsWith("@Rdiscussion@")) {
-																input.replaceFirst("@Rdiscussion@", "");
+																input=input.replaceFirst("@Rdiscussion@", "");
 																String user="";
 																String temp="";
 																String discussion="";
@@ -233,7 +233,7 @@ public class Server implements Runnable{
 																	}
 																}
 																discussion=temp;
-																giveDiscussion(getDiscussion(atoi(discussion)),user);
+																giveDiscussion(getDiscussion(discussion),user);
 																
 															}
 														}
@@ -248,7 +248,6 @@ public class Server implements Runnable{
 									socketOuvert=false;
 								}
 							}
-							socket.close();
 						} catch (IOException e) {e.printStackTrace();}
 					}
 
@@ -259,16 +258,20 @@ public class Server implements Runnable{
 		}catch (IOException e){e.printStackTrace();}
 	}
 	
-	protected void giveDiscussion(Discussion discussion, String user) {
-		Socket socket;
-		PrintWriter output = null;
+	
+protected void giveDiscussion(Discussion discussion, String user) {
 		try {
-			socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
-			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+			for (User u : communication.keySet()) {
+				if(u.getNameUser().equals(user)) {
+					communication.get(u).write("@NewD@"+discussion.toString()+"\n");
+					communication.get(u).flush();
+				}
+			}
+			
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		output.println("@NewD@"+discussion.toString());
 	}
 	
 	// J'ai ajoute des atoi et remplace getId par getPort. Du coup dans user y a l'id/port et les ports sont differents en theorie
@@ -285,6 +288,29 @@ public class Server implements Runnable{
 				}
 				output.println("@Message@"+user+"@"+discussion+"@"+message);
 				updateStatus(message,user);
+				
+			}
+		}
+		
+	}
+	protected void retransmettreMessageV2(String user, String discussion, String message) {
+		Socket socket;
+		PrintWriter output = null;
+		for( User client : getDiscussion(discussion).getGroup().group ){
+			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
+				try {
+					for (User u : communication.keySet()) {
+						if(u.getNameUser().equals(user)) {
+							communication.get(u).write("@Message@"+user+"@"+message+"\n");
+							communication.get(u).flush();
+							updateStatus(message,user);
+						}
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			}
 		}
@@ -468,25 +494,43 @@ public class Server implements Runnable{
 	protected void refresh(String user) {
 		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "@Envoyeur@Discussion@contenu@Date" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
-		Socket socket;
-		PrintWriter output = null;
 		if(unviewedmessage!=null) {
 			for(String message : unviewedmessage) {
 				try {
-					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
-					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+					for (User u : communication.keySet()) {
+						if(u.getNameUser().equals(user)) {
+							communication.get(u).write("@Message@"+user+"@"+message+"\n");
+							communication.get(u).flush();
+							updateStatus(message,user);
+						}
+					}
+					
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				output.println("@Message@"+user+"@"+message);
-				updateStatus(message,user);
+				
 			}
 				
+			
 		}
-
+		try {
+			for (User u : communication.keySet()) {
+				if(u.getNameUser().equals(user)) {
+					communication.get(u).write(".\n");
+					communication.get(u).flush();
+				}
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
-	// Les deux String doivent correspondre aux id. String user sert � rien
+	// Les deux String doivent correspondre aux id. String user sert à rien
 	private void updateStatus(String message, String user) {
 		int idm = atoi(message);
 		int idd = 0;
@@ -544,7 +588,7 @@ public class Server implements Runnable{
 	}
 
 	protected void updateBDDMessage(String user, String group, String message) {
-		// ajout message à bdd, si il y est dejà le message est lu
+		// ajout message Ã  bdd, si il y est dejÃ  le message est lu
 		// Il est lu pour tout le monde
 	}
 
@@ -554,7 +598,7 @@ public class Server implements Runnable{
 	}
 
 	protected void adduserGBDD(String user, String group) {
-		// ajoute un user à un groupe
+		// ajoute un user Ã  un groupe
 		
 	}
 
@@ -564,10 +608,26 @@ public class Server implements Runnable{
 		
 	}
 
-	protected void connect_user(String user, String ip_Adress) {
-		// TODO Auto-generated method stub
-		// Pourquoi ip_Adress ?
-		
+	protected void connect_user(String user, Socket s) throws IOException {
+		boolean is_present =false;
+		for (User u : communication.keySet()) {
+			is_present=u.getNameUser()==user;
+		}
+		if(!is_present) {
+			communication.put(new Client(user), new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
+		}
+		try {
+			for (User u : communication.keySet()) {
+				if(u.getNameUser().equals(user)) {
+					communication.get(u).write("Ack"+"\n");
+					communication.get(u).flush();
+				}
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args){
