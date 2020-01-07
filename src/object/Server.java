@@ -532,12 +532,6 @@ public class Server implements Runnable{
 		}
 	}
 
-	private String getIp(String user) {
-		// TODO Auto-generated method stub
-		// C'est quoi cette Ip ?
-		return null;
-	}
-
 	private LinkedList<String> getAllUnviewedMessage(String user) {
 		// TODO Auto-generated method stub
 		// C'est pas personnel les message non vu 
