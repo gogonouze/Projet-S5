@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  lun. 06 jan. 2020 à 17:43
+-- Généré le :  mar. 07 jan. 2020 à 10:31
 -- Version du serveur :  10.4.10-MariaDB
 -- Version de PHP :  7.3.12
 
@@ -33,9 +33,19 @@ CREATE TABLE IF NOT EXISTS `appartenirud` (
   `IdU` int(11) NOT NULL,
   `IdD` int(11) NOT NULL,
   PRIMARY KEY (`IdU`,`IdD`),
-  UNIQUE KEY `FOREIGN_APP2_IDU` (`IdU`),
-  KEY `FOREIGN_APP2_IDD` (`IdD`)
+  KEY `FOREIGN_APP2_IDD` (`IdD`),
+  KEY `FOREIGN_APP2_IDU` (`IdU`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Déchargement des données de la table `appartenirud`
+--
+
+INSERT INTO `appartenirud` (`IdU`, `IdD`) VALUES
+(1, 1),
+(1, 2),
+(2, 1),
+(2, 2);
 
 -- --------------------------------------------------------
 
@@ -48,8 +58,8 @@ CREATE TABLE IF NOT EXISTS `appartenirug` (
   `IdU` int(11) NOT NULL,
   `IdG` int(11) NOT NULL,
   PRIMARY KEY (`IdU`,`IdG`),
-  KEY `FOREIGN_APP1_IDG` (`IdG`),
-  KEY `FOREIGN_APP1_IDU` (`IdU`)
+  KEY `FOREIGN_APP1_IDU` (`IdU`),
+  KEY `FOREIGN_APP1_IDG` (`IdG`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -64,6 +74,14 @@ CREATE TABLE IF NOT EXISTS `discussion` (
   `Name` varchar(30) NOT NULL,
   PRIMARY KEY (`IdD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Déchargement des données de la table `discussion`
+--
+
+INSERT INTO `discussion` (`IdD`, `Name`) VALUES
+(1, 'Discussion_Test'),
+(2, 'Projet');
 
 -- --------------------------------------------------------
 
@@ -104,6 +122,14 @@ CREATE TABLE IF NOT EXISTS `message` (
   KEY `IdD` (`IdD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Déchargement des données de la table `message`
+--
+
+INSERT INTO `message` (`IdM`, `Content`, `IsRead`, `Time`, `IdU`, `IdD`) VALUES
+(1, 'Salut à tous les amis !', 0, '2020/01/06 20:35:56', 1, 1),
+(2, 'Je suis de retour !', 1, '2020/01/06 19:23:50', 2, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -119,6 +145,14 @@ CREATE TABLE IF NOT EXISTS `user` (
   `IsConnected` int(11) NOT NULL,
   PRIMARY KEY (`IdU`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Déchargement des données de la table `user`
+--
+
+INSERT INTO `user` (`IdU`, `Name`, `ForName`, `Password`, `IsConnected`) VALUES
+(1, 'Paul', '', 'abc', 1),
+(2, 'Jean', '', 'cba', 0);
 
 --
 -- Contraintes pour les tables déchargées

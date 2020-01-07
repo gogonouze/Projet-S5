@@ -413,9 +413,29 @@ public class Server implements Runnable{
 		return d;
 	}
 	
-	protected void addDiscussion(String discussion, Group group) {
-		// TODO Auto-generated method stub
+	protected void addDiscussion(String discussion, Group group, int id) {
 		
+		Connection con;
+		int idU;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO discussion (IdD, Name) VALUES ('" + id + "', '" + discussion + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		for (User u : group.getGroup()) {
+			idU = u.getPort();
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("INSERT INTO appartenirud (IdU, IdD) VALUES ('" + idU + "', '" + id + "')");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	// actuellement tous les User sont des clients
@@ -433,7 +453,7 @@ public class Server implements Runnable{
 				int idU = rst.getInt("IdU");
 				if (idU == id) {
 					name = rst.getString("Name");	
-					u = new Client(name, null);
+					u = new Client(name, id);
 				}
 			}
 			
@@ -467,26 +487,47 @@ public class Server implements Runnable{
 
 	private void updateStatus(String message, String user) {
 		// cet user a lu ce message
+		int m = atoi(message);
+		int u = atoi(user);
+		Connection con;
 		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdM ," + "IdU FROM bdd_projet_s5.message");
+			while (rst.next()) {
+				int idM = rst.getInt("IdM");
+				int idU = rst.getInt("IdU");
+				if (idM == m && idU == u) {
+					
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String getIp(String user) {
 		// TODO Auto-generated method stub
+		// C'est quoi cette Ip ?
 		return null;
 	}
 
 	private LinkedList<String> getAllUnviewedMessage(String user) {
 		// TODO Auto-generated method stub
+		// C'est pas personnel les message non vu 
 		return null;
 	}
 
 	protected void updateLeaveConv(String user, String discussion) {
 		// TODO Auto-generated method stub
-		
+		// Mais c'est une conv de groupe, tu dois pas quiter le groupe ?
 	}
 
 	protected void updateBDDMessage(String user, String group, String message) {
 		// ajout message à bdd, si il y est dejà le message est lu
+		// Il est lu pour tout le monde
 	}
 
 	protected void deleteuserGBDD(String user, String group) {
@@ -501,11 +542,13 @@ public class Server implements Runnable{
 
 	protected void adduserBDD(String user, String group) {
 		// ajoute un user
+		// Pourquoi group ?
 		
 	}
 
 	protected void connect_user(String user, String ip_Adress) {
 		// TODO Auto-generated method stub
+		// Pourquoi ip_Adress ?
 		
 	}
 

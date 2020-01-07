@@ -7,5 +7,12 @@ public class Client extends User {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Client(String name, int PORT_RECEPTION) {
+		super(name, PORT_RECEPTION);
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
 }
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Group implements Comparable<Group>{
 	private int iD_group;
-	List<User> group =new ArrayList<User>();
+	public List<User> group =new ArrayList<User>();
 
 	public int getiD_group() {
 		return iD_group;
@@ -29,4 +29,10 @@ public class Group implements Comparable<Group>{
 		}
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "Group [iD_group=" + iD_group + ", group=" + group + "]";
+	}
+	
 }

@@ -41,6 +41,14 @@ public abstract class User implements Runnable{
 		
 	}
 	
+	public User(String name, int PORT_RECEPTION) {
+		super();
+		this.name = name;
+		this.PORT_RECEPTION = PORT_RECEPTION;
+	}
+
+
+
 	public String getNameUser() {
 		return name;
 	}

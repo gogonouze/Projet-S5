@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import object.Client;
 import object.Discussion;
+import object.Group;
 import object.Message;
 import object.Status;
 import object.User;
@@ -97,7 +98,7 @@ public class BddTest {
 				int idU = rst.getInt("IdU");
 				if (idU == id) {
 					name = rst.getString("Name");	
-					u = new Client(name, null);
+					u = new Client(name, id);
 				}
 			}
 			
@@ -165,30 +166,44 @@ public class BddTest {
 		
 		System.out.println(d.toString());
 	}
-	
-	public static void main(String[] args) {
+
+	private static void addDiscussion(String discussion, Group group, int id) {
 		
 		Connection con;
+		int idU;
 		
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdG ," + "Name FROM bdd_projet_s5.group");
-			
-			while (rst.next()) {
-				String s = rst.getString("Name");
-				int i = rst.getInt("IdG");
-				System.out.println("Name = " + s + " IdG = " + i);
-			}
-			
+			stmt.executeUpdate("INSERT INTO discussion (IdD, Name) VALUES ('" + id + "', '" + discussion + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		for (User u : group.getGroup()) {
+			idU = u.getPort();
+			try {
+				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+				Statement stmt = con.createStatement();
+				stmt.executeUpdate("INSERT INTO appartenirud (IdU, IdD) VALUES ('" + idU + "', '" + id + "')");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
 		
 		isconnected(1);
 		//getMessage(1);
 		//getUser(1);
 		getDiscussion(1);
+		Group g = new Group();
+		g.group.add(getUser(1));
+		g.group.add(getUser(2));
+		System.out.println(g.toString());
+		addDiscussion("Projet", g, 2);
+		
 	}
 	
 }
