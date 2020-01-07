@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NavigableSet;
 
 import javax.swing.Action;
@@ -25,14 +27,16 @@ import javax.swing.SwingConstants;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTextPane;
 import javax.swing.ListModel;
+import java.awt.Color;
 
 public class Gui {
 	
 	private JTextArea textArea_1;
 	private JFrame frame;
 	private User user;
-	private JList list;
-	private ListModel model = (ListModel) user.getDiscussions();
+	private JList<String> list;
+	private List<Integer> list_id = new ArrayList<>();
+	private DefaultListModel<String> model = new DefaultListModel<>();
 	
 	/**
 	 * Launch the application.
@@ -76,6 +80,8 @@ public class Gui {
 		panel_1.add(btnNewButton);
 		
 		list = new JList();		
+		list.setBackground(Color.WHITE);
+		list.setForeground(Color.BLACK);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		panel.add(list, BorderLayout.CENTER);
 		
@@ -93,11 +99,11 @@ public class Gui {
 		JButton btnNewButton_1 = new JButton("New button");
 		panel_4.add(btnNewButton_1);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setRows(3);
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
-		panel_3.add(textArea, BorderLayout.CENTER);
+		JTextArea txtrPute = new JTextArea();
+		txtrPute.setRows(3);
+		txtrPute.setLineWrap(true);
+		txtrPute.setWrapStyleWord(true);
+		panel_3.add(txtrPute, BorderLayout.CENTER);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -110,6 +116,17 @@ public class Gui {
 		textArea_1.setWrapStyleWord(true);
 		scrollPane.setViewportView(textArea_1);
 		
+		updateDiscussionsList();
 		list.setModel(model);
 	}
+	
+	private void updateDiscussionsList() {
+		for(Discussion d : user.getDiscussions()) {
+			list_id.add(d.getId());
+			model.addElement(d.getName());
+		}
+	}
+	
+	
+	
 }

@@ -197,37 +197,45 @@ public abstract class User implements Runnable{
 
 			return (int) result;
 		}
+
 	protected void request_discussion(String discussion) {
 		output.println("@Rdiscussion@"+getPort()+"@"+discussion);
 
 	}
+
 	public void connect() {
 			output.println("@Connection@"+getPort()+"@"+PORT_RECEPTION);
 	}
+	
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
 		output.println("@joinGroup@"+getPort()+"@"+groupe.getiD_group());
 
 	}
+	
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
 		output.println("@leaveGroup@"+getPort()+"@"+groupe.getiD_group());
 
 	}
+	
 	public void sendMessage(String message ,Discussion discussion) {
 		Message temp = new Message(message);
 		discussion.getMessages().add(temp);
 		output.println("@Message@"+getPort()+"@"+discussion.getId()+"@"+temp.getMessage());
 	}
+	
 	public void createConversation( String message, String name_conv ,Group group) {
 		Message temp = new Message(message);
 		output.println("@NeWMessage@"+name_conv+"@"+getPort()+"@"+"@"+group.toString()+"@"+temp.getMessage());
 	}
+	
 	public void leaveConversation (Discussion conversation) {
 		output.println("@LeaveC@"+getPort()+"@"+conversation.getId());
 		this.discussions.remove(conversation);
 
 	}
+	
 	public int getPort() {
 		// TODO Auto-generated method stub
 		return PORT_RECEPTION;
@@ -238,4 +246,12 @@ public abstract class User implements Runnable{
 		return "User [name=" + name + "]";
 	}
 
+	public NavigableSet<Discussion> getDiscussions() {
+		return discussions;
+	}
+	
+	public void debug_addDiscussion(Discussion discussion) {
+		discussions.add(discussion);
+	}
+	
 }
