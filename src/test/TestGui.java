@@ -2,13 +2,12 @@ package test;
 
 import object.Client;
 import object.Discussion;
-import object.Gui;
 import object.User;
 
-public class Main {
+public class TestGui {
 
 	public static void main(String[] args) {
-	
+		System.out.println("alo");
 	}
 
 }
