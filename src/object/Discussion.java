@@ -10,9 +10,8 @@ public class Discussion {
 	private List<User> group = new ArrayList<>();
 	private int id_Conv;
 	
-	public Discussion(String name, int id, Group group, Message message) {
+	public Discussion(String name, Group group, Message message) {
 		this.name = name;
-		id_Conv = id;
 		this.group = group.getGroup();
 		messages.add(message);
 	}

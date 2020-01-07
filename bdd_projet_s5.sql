@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  mar. 07 jan. 2020 à 12:26
+-- Généré le :  mar. 07 jan. 2020 à 16:26
 -- Version du serveur :  10.4.10-MariaDB
 -- Version de PHP :  7.3.12
 
@@ -37,16 +37,6 @@ CREATE TABLE IF NOT EXISTS `appartenirud` (
   KEY `FOREIGN_APP2_IDU` (`IdU`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Déchargement des données de la table `appartenirud`
---
-
-INSERT INTO `appartenirud` (`IdU`, `IdD`) VALUES
-(1, 1),
-(1, 2),
-(2, 1),
-(2, 2);
-
 -- --------------------------------------------------------
 
 --
@@ -71,37 +61,24 @@ CREATE TABLE IF NOT EXISTS `appartenirug` (
 DROP TABLE IF EXISTS `discussion`;
 CREATE TABLE IF NOT EXISTS `discussion` (
   `IdD` int(11) NOT NULL,
+  `NbD` int(11) NOT NULL DEFAULT 0,
   `Name` varchar(30) NOT NULL,
   PRIMARY KEY (`IdD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Déchargement des données de la table `discussion`
---
-
-INSERT INTO `discussion` (`IdD`, `Name`) VALUES
-(1, 'Discussion_Test'),
-(2, 'Projet');
-
 -- --------------------------------------------------------
 
 --
--- Structure de la table `group`
+-- Structure de la table `groupe`
 --
 
-DROP TABLE IF EXISTS `group`;
-CREATE TABLE IF NOT EXISTS `group` (
+DROP TABLE IF EXISTS `groupe`;
+CREATE TABLE IF NOT EXISTS `groupe` (
   `IdG` int(11) NOT NULL,
+  `NbG` int(11) NOT NULL DEFAULT 0,
   `Name` varchar(30) NOT NULL,
   PRIMARY KEY (`IdG`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Déchargement des données de la table `group`
---
-
-INSERT INTO `group` (`IdG`, `Name`) VALUES
-(1, 'groupeTest');
 
 -- --------------------------------------------------------
 
@@ -112,24 +89,17 @@ INSERT INTO `group` (`IdG`, `Name`) VALUES
 DROP TABLE IF EXISTS `message`;
 CREATE TABLE IF NOT EXISTS `message` (
   `IdM` int(11) NOT NULL,
+  `NbM` int(11) NOT NULL DEFAULT 0,
   `Content` varchar(3000) NOT NULL,
   `IsRead` int(1) NOT NULL,
   `Time` varchar(50) NOT NULL,
-  `NbVu` int(11) DEFAULT NULL,
+  `NbVu` int(11) DEFAULT 0,
   `IdU` int(11) NOT NULL,
   `IdD` int(11) NOT NULL,
   PRIMARY KEY (`IdM`),
   KEY `IdU` (`IdU`),
   KEY `IdD` (`IdD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Déchargement des données de la table `message`
---
-
-INSERT INTO `message` (`IdM`, `Content`, `IsRead`, `Time`, `NbVu`, `IdU`, `IdD`) VALUES
-(1, 'Salut à tous les amis !', 1, '2020/01/06 20:35:56', 1, 1, 1),
-(2, 'Je suis de retour !', 1, '2020/01/06 19:23:50', 0, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -140,20 +110,13 @@ INSERT INTO `message` (`IdM`, `Content`, `IsRead`, `Time`, `NbVu`, `IdU`, `IdD`)
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `IdU` int(11) NOT NULL,
+  `NbU` int(11) NOT NULL DEFAULT 0,
   `Name` varchar(20) NOT NULL,
-  `ForName` varchar(20) NOT NULL,
-  `Password` varchar(50) NOT NULL,
+  `ForName` varchar(20) DEFAULT NULL,
+  `Password` varchar(50) DEFAULT NULL,
   `IsConnected` int(11) NOT NULL,
   PRIMARY KEY (`IdU`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Déchargement des données de la table `user`
---
-
-INSERT INTO `user` (`IdU`, `Name`, `ForName`, `Password`, `IsConnected`) VALUES
-(1, 'Paul', '', 'abc', 1),
-(2, 'Jean', '', 'cba', 0);
 
 --
 -- Contraintes pour les tables déchargées
@@ -170,7 +133,7 @@ ALTER TABLE `appartenirud`
 -- Contraintes pour la table `appartenirug`
 --
 ALTER TABLE `appartenirug`
-  ADD CONSTRAINT `FOREIGN_APP1_IDG` FOREIGN KEY (`IdG`) REFERENCES `group` (`IdG`),
+  ADD CONSTRAINT `FOREIGN_APP1_IDG` FOREIGN KEY (`IdG`) REFERENCES `groupe` (`IdG`),
   ADD CONSTRAINT `FOREIGN_APP1_IDU` FOREIGN KEY (`IdU`) REFERENCES `user` (`IdU`);
 
 --
