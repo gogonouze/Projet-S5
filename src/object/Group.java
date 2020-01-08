@@ -25,7 +25,6 @@ public class Group implements Comparable<Group>{
 
 	@Override
 	public int compareTo(Group o2) {
-		// TODO Auto-generated method stub
 		return this.iD_group-o2.iD_group;
 	}
 	
@@ -42,5 +41,13 @@ public class Group implements Comparable<Group>{
 	public String toString() {
 		return "Group [iD_group=" + iD_group + ", group=" + group + "]";
 	}
+	public String BetterToString () {
+		String retval=name+"@"+iD_group+this.toString();
+		return retval;
+	}
+	public Group() {
+		super();
+	}
+
 	
 }
