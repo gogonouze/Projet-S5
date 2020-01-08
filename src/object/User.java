@@ -253,7 +253,7 @@ public abstract class User {
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
 		try {
-			output.write("@joinGroup@"+name+"@"+groupe.getiD_group());
+			output.write("@joinGroup@"+id+"@"+groupe.getiD_group());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -264,7 +264,7 @@ public abstract class User {
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
 		try {
-			output.write("@leaveGroup@"+name+"@"+groupe.getiD_group());
+			output.write("@leaveGroup@"+id+"@"+groupe.getiD_group());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -285,6 +285,8 @@ public abstract class User {
 	
 	public void createConversation( String message, String name_conv ,Group group) {
 		Message temp = new Message(message);
+		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), new Message(message));
+		d.getGroup().add(this);
 		try {
 			output.write("@NeWMessage@"+name_conv+"@"+name+"@"+"@"+group.toString()+"@"+temp.getMessage());
 		} catch (IOException e) {
