@@ -555,6 +555,10 @@ protected void refresh(String user) {
 		
 		
 	}
+	protected void disconnectUser(int id) {
+		communication.remove(id);
+		
+	}
 
 	// Les deux String doivent correspondre aux id. String user sert Ã  rien
 	private void updateStatus(String message) {
