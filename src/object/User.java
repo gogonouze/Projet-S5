@@ -287,7 +287,32 @@ public abstract class User {
 		}
 		
 	}
-	
+	public void createGroup(String nameG) {
+		List<User> l =new ArrayList<User>();
+		l.add((Client) this);
+		Group g = new Group(nameG, 0, l );
+		
+		String command="";	
+		command="@createGroup@"+nameG+"@"+id;
+				try {
+					output.write(command +"\n");
+					output.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+		String reponse="";
+		try {
+			reponse = input.readLine();
+			g.setiD_group(atoi(reponse));
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		allGroup.add(g);
+		groups.add(g);
+	}
 	public void sendMessage(String message ,Discussion discussion) {
 		Message temp = new Message(message);
 		discussion.getMessages().add(temp);

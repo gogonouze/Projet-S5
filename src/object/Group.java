@@ -40,6 +40,9 @@ public class Group implements Comparable<Group>{
 		}
 		return false;
 	}
+	public void setiD_group(int iD_group) {
+		this.iD_group = iD_group;
+	}
 
 	@Override
 	public String toString() {
