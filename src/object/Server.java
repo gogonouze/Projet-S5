@@ -865,7 +865,7 @@ protected void refresh(String user) {
 	
 	protected void connect_user(String user, String password, String id, Socket s) throws IOException {
 		Integer id_user=atoi(user);
-		if(matchUserPassword(user,password,id)) {
+		if(matchpassword(id_user,password)) {
 			boolean is_present =false;
 				is_present=communication.containsKey(id_user);
 				if (is_present) {
