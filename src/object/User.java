@@ -1,32 +1,30 @@
 package object;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 
 
-public abstract class User implements Runnable{
-	private int id;
+
+public abstract class User {
+	private int id = 0;
 	private String name;
 	OutputStreamWriter output;
 	BufferedReader input ;
 	NavigableSet<Group> groups = new TreeSet<Group>() ;
 	NavigableSet<Discussion> discussions= new TreeSet<Discussion>();
+	List<Group> allGroup = new ArrayList<Group>();
 	private static final int PORT = 8952;
-	private int PORT_RECEPTION;
 	Socket socket;
 	Timer t = new Timer();
 	public User(String name) {
 		this.name = name;
-		try {
-			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
-			socket.getKeepAlive();
-			output = new OutputStreamWriter(socket.getOutputStream());
-			input =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 
 		
 	}
@@ -42,10 +40,6 @@ public abstract class User implements Runnable{
 
 	public int getId() {
 		return id;
-	}
-
-	public static int getPort() {
-		return PORT;
 	}
 
 	public String getNameUser() {
@@ -92,13 +86,53 @@ public abstract class User implements Runnable{
 		}
 
 	protected void request_discussion(String discussion) throws IOException {
-		output.write("@Rdiscussion@"+name+"@"+discussion);
+		output.write("@Rdiscussion@"+id+"@"+discussion+"\n");
+		output.flush();
+		String reponse="";
+		reponse = input.readLine();
+		String name="";
+		String temp="";
+		int id=0;
+		List <User> u = new ArrayList<User>();
+		int nbdot =0;
+		for(char car : reponse.toCharArray()) {
+			if(car=='@') {
+				if(nbdot==0) {
+					name=temp;
+					temp="";
+					nbdot++;
+				}
+				else {
+					if(nbdot==1) {
+						id=atoi(temp);
+						nbdot++;
+						temp="";
+					}
+					else {
+						u.add(new Client(temp));
+						temp="";
+					}
+				}
+			}
+			else {
+				temp.concat(Character.toString(car));
+			}
+		}
+		discussions.add(new Discussion(name,new TreeSet<Message>(),u,id));
 		
 	}
 
-	public void connect() {
+	public void connect(String userName, String password) {
+		try {
+			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
+			socket.getKeepAlive();
+			output = new OutputStreamWriter(socket.getOutputStream());
+			input =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		String command="";	
-		command="@Connection@"+name;
+		command="@Connection@"+userName+"@"+password+"@"+id;
 				try {
 					output.write(command +"\n");
 					output.flush();
@@ -110,13 +144,99 @@ public abstract class User implements Runnable{
 		String reponse="";
 		try {
 			reponse = input.readLine();
+			if(!reponse.equals("WrongPassword")) {
+				this.id=atoi(reponse);
+			}
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		t.schedule(new Refresh(),1,5);
+		t.schedule(new Refresh(),1,100);
 	}
 	
+	public void create_account(String userName, String password) {
+		try {
+			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
+			socket.getKeepAlive();
+			output = new OutputStreamWriter(socket.getOutputStream());
+			input =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String command="";	
+		command="@createAccount@"+userName+"@"+password;
+				try {
+					output.write(command +"\n");
+					output.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+		String reponse="";
+		try {
+			reponse = input.readLine();
+			this.id=atoi(reponse);
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		t.schedule(new Refresh(),1,100);
+	}
+	public void requestGroup() {
+		try {
+			output.write("@requestGroup@"+id);
+			String reponse="";
+			while(!reponse.equals(".")) {
+				reponse = input.readLine();
+				String name_group = "";
+				int id_group = 0;
+				List<User> membres= new LinkedList<User>();
+				String temp ="";
+				int nbdot =0;
+				for(char car : reponse.toCharArray()) {
+					if(car=='@') {
+						if(nbdot==0) {
+							name_group=temp;
+							temp="";
+							nbdot++;
+						}
+						else {
+							if(nbdot==1) {
+								id_group=atoi(temp);
+								nbdot++;
+								temp="";
+							}
+							else {
+								membres.add(new Client(temp));
+								temp = "";
+							}
+								
+							
+						}
+					}
+					else {
+						temp.concat(Character.toString(car));
+					}
+				}
+				Group g = new Group(name_group, id_group, membres);
+				boolean present=false;
+				for(Group alo : allGroup) {
+					if(g.equals(alo)) {
+						present=true;
+					}
+				}
+				if(!present) {
+					allGroup.add(g);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	
+		
+	}
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
 		try {
@@ -142,7 +262,12 @@ public abstract class User implements Runnable{
 	public void sendMessage(String message ,Discussion discussion) {
 		Message temp = new Message(message);
 		discussion.getMessages().add(temp);
-		output.println("@Message@"+getPort()+"@"+discussion.getId()+"@"+temp.getMessage());
+		try {
+			output.write("@Message@"+getId()+"@"+discussion.getId()+"@"+temp.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void createConversation( String message, String name_conv ,Group group) {
@@ -173,6 +298,98 @@ public abstract class User implements Runnable{
 	public NavigableSet<Discussion> getDiscussions() {
 		return discussions;
 	}
+	
+	public void debug_addDiscussion(Discussion discussion) {
+		discussions.add(discussion);
+	}
+	public Discussion getDiscussion(int i) {
+		for (Discussion d : this.discussions) {
+			if (d.getId() == i) 
+				return d;
+		}
+		return null;
+	}
+	private class Refresh extends TimerTask {
+
+		@Override
+		public void run() {
+			String command="@Refresh@"+name;
+					try {
+						output.write(command +"\n");
+						output.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+			String reponse="";
+			while(!reponse.equals(".")) {
+				try {
+					reponse = input.readLine();
+					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
+					String expediteur = "";
+					int id_discussion = 0;
+					int id_message = 0;
+					String date = "";
+					String contenu = "";
+					System.out.println(reponse);
+					String temp ="";
+					int nbdot =0;
+					for(char car : reponse.toCharArray()) {
+						if(car=='@') {
+							if(nbdot==0) {
+								expediteur=temp;
+								temp="";
+								nbdot++;
+							}
+							else {
+								if(nbdot==1) {
+									id=atoi(temp);
+									nbdot++;
+									temp="";
+								}
+								else {
+									if (nbdot == 2) {
+										date=temp;
+										nbdot++;
+										temp="";
+									}
+									else {
+										id_message = atoi(temp);
+										temp = "";
+									}
+								}
+							}
+						}
+						else {
+							temp.concat(Character.toString(car));
+						}
+					}
+					contenu = temp;
+					boolean already_read = false;
+					for(Discussion d : discussions ) {
+						if(d.getId()==id_discussion) {
+							for(Message m : d.getMessages()) {
+								if(m.getId()==id_message) {
+									already_read= true;
+								}
+							}
+						}
+						if(!already_read) {
+							d.getMessages().add(new Message(contenu, Status.viewed,date, id_message, expediteur));
+							output.write("@ack@"+id_message);
+						}
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+	}
+	
 	
 	public Discussion getDiscussion(int i) {
 		for (Discussion d : this.discussions) {
