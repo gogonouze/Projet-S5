@@ -559,7 +559,13 @@ protected void refresh(String user) {
 		communication.remove(id);
 		
 	}
-
+	protected boolean matchpassword(int id_user, String password_test){
+		return password_test.equals(getPassword(id_user));
+	}
+	private Object getPassword(int id_user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	// Les deux String doivent correspondre aux id. String user sert Ã  rien
 	private void updateStatus(String message) {
 		int idm = atoi(message);
