@@ -20,6 +20,13 @@ public class Discussion implements Comparable<Discussion>{
 		messages.add(message);
 	}
 	
+	public Discussion(String name, Group group, Message message, int id_Conv) {
+		this.name = name;
+		this.group = group.getGroup();
+		this.id_Conv = id_Conv;
+		messages.add(message);
+	}
+	
 	public int getId_Conv() {
 		return id_Conv;
 	}
