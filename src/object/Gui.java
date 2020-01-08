@@ -42,17 +42,18 @@ import javax.swing.JCheckBox;
 
 public class Gui {
 	
-	private JTextArea displayArea;
+
 	private JFrame frame;
+	private JTextArea displayArea;
+	private JTextArea messageArea;
 	private User user;
+	private JButton sendButton;
 
 	Timer t = new Timer();
 	
 	private JList<String> list;
 	private List<Integer> list_id = new ArrayList<>();
 	private DefaultListModel<String> model = new DefaultListModel<>();
-	
-	JTextArea messageArea;
 	
 	private final Action newDiscussion = new SwingAction();
 	private final Action Send = new SwingAction_1();
@@ -127,9 +128,9 @@ public class Gui {
 		panel_3.add(panel_4, BorderLayout.EAST);
 		panel_4.setLayout(new GridLayout(0, 1, 0, 0));
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		btnNewButton_1.setAction(Send);
-		panel_4.add(btnNewButton_1);
+		sendButton = new JButton("New button");
+		sendButton.setAction(Send);
+		panel_4.add(sendButton);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -156,6 +157,7 @@ public class Gui {
 		updateDiscussionsList();
 		list.setModel(model);
 		t.schedule(new Display(), 1,300);
+		t.schedule(new SendEnable(), 1, 300);
 	}
 	
 	private void updateDiscussionsList() {
@@ -209,6 +211,19 @@ public class Gui {
 				displayContent();
 			} else {
 				displayBlank();
+			}
+		}
+		
+	}
+	
+	private class SendEnable extends TimerTask {
+		
+		@Override
+		public void run() {
+			if (!"".equals(messageArea.getText())) {
+				sendButton.setEnabled(true);
+			} else {
+				sendButton.setEnabled(false);
 			}
 		}
 		

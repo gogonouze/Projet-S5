@@ -1,6 +1,7 @@
 package gui_element;
 
 import object.User;
+import object.Group;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -16,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
+import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.Dialog.ModalityType;
 
@@ -26,7 +29,10 @@ public class PopUp_NewDiscussion extends JDialog {
 	private JTextArea textArea;
 	JButton okButton;
 	
+	Timer t = new Timer();
+	
 	private User user;
+	private List<Group> allGroup;
 
 	/**
 	 * Launch the application.
@@ -47,6 +53,8 @@ public class PopUp_NewDiscussion extends JDialog {
 	 */
 	public PopUp_NewDiscussion(User user) {
 		this.user = user;
+		this.allGroup = user.();
+		
 		
 		setAlwaysOnTop(true);
 		setType(Type.POPUP);
@@ -57,44 +65,44 @@ public class PopUp_NewDiscussion extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		{
-			JPanel panel = new JPanel();
-			contentPanel.add(panel, BorderLayout.NORTH);
-			{
-				JLabel lblPickAGroup = new JLabel("Pick a group");
-				lblPickAGroup.setHorizontalAlignment(SwingConstants.LEFT);
-				panel.add(lblPickAGroup);
-			}
-			{
-				comboBox = new JComboBox();
-				panel.add(comboBox);
-			}
-		}
-		{
-			JScrollPane scrollPane = new JScrollPane();
-			contentPanel.add(scrollPane, BorderLayout.CENTER);
-			{
-				textArea = new JTextArea();
-				scrollPane.setViewportView(textArea);
-			}
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				okButton = new JButton("Send");
-				okButton.setEnabled(false);
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
-			}
-		}
+		
+		JPanel panel = new JPanel();
+		contentPanel.add(panel, BorderLayout.NORTH);
+			
+		JLabel lblPickAGroup = new JLabel("Pick a group");
+		lblPickAGroup.setHorizontalAlignment(SwingConstants.LEFT);
+		panel.add(lblPickAGroup);
+			
+			
+		comboBox = new JComboBox();
+		panel.add(comboBox);
+			
+		
+		
+		JScrollPane scrollPane = new JScrollPane();
+		contentPanel.add(scrollPane, BorderLayout.CENTER);
+			
+		textArea = new JTextArea();
+		scrollPane.setViewportView(textArea);
+			
+		
+		
+		JPanel buttonPane = new JPanel();
+		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			
+		okButton = new JButton("Send");
+		okButton.setEnabled(false);
+		okButton.setActionCommand("OK");
+		buttonPane.add(okButton);
+		getRootPane().setDefaultButton(okButton);
+			
+			
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("Cancel");
+		buttonPane.add(cancelButton);
+			
+		t.schedule(new SendEnable(), 1,300);
 		
 	}
 	
