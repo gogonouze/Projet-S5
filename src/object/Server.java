@@ -5,8 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -25,8 +23,8 @@ public class Server implements Runnable{
 	private static final int PORT = 8952;
 	Socket socket;
 	ServerSocket server;
-	HashMap<User, BufferedWriter> communication= new HashMap<User, BufferedWriter>();
-	//crÃ©e le serveur
+	HashMap<Integer, BufferedWriter> communication= new HashMap<Integer, BufferedWriter>();
+	//crée le serveur
 	public Server(){
 		try {
 			server = new ServerSocket(PORT);
@@ -150,7 +148,7 @@ public class Server implements Runnable{
 													deleteuserGBDD(atoi(user),atoi(group));
 												}
 												else {
-													//message envoyÃ© le serveur va retransmettre le message
+													//message envoyé le serveur va retransmettre le message
 													if(input.startsWith("@Message@")){
 														input=input.replaceFirst("@Message@", "");
 														String user="";
@@ -191,7 +189,7 @@ public class Server implements Runnable{
 															updateLeaveConv(atoi(user),atoi(discussion));
 
 													}
-														//CrÃ©er une conversation
+														//Créer une conversation
 														if(input.startsWith("@NeWMessage@")) {
 															input=input.replaceFirst("@NeWMessage@", "");
 															Group group= new Group();
@@ -280,6 +278,12 @@ public class Server implements Runnable{
 																				input=input.replaceFirst("@requestGroup@", "");
 																				sendAllGroup(atoi(input));
 																			}
+																			else {
+																				if(input.startsWith("@disconnect@")) {
+																					input=input.replaceFirst("@disconnect@", "");
+																					disconnectUser(atoi(input));
+																				}
+																			}
 																		}
 																	}
 																}
@@ -308,6 +312,12 @@ public class Server implements Runnable{
 	}
 	
 	
+	protected void disconnectUser(int id) {
+		communication.remove(id);
+		
+	}
+
+
 	protected void sendAllGroup(int id) {
 		List<Group> zbreh= getAllGroup();
 		if(zbreh!=null) {
@@ -332,22 +342,7 @@ public class Server implements Runnable{
 		
 	}
 
-	
-	protected void giveDiscussion(Discussion discussion, String user) {
-		try {
-			for (User u : communication.keySet()) {
-				if(u.getNameUser().equals(user)) {
-					communication.get(u).write("@NewD@"+discussion.toString()+"\n");
-					communication.get(u).flush();
-				}
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+
 	protected void create_user(String user, String password, Socket s) {
 		Integer id = adduserBDD(user);
 		try {
@@ -365,6 +360,18 @@ public class Server implements Runnable{
 		
 	}
 
+
+	protected void giveDiscussion(Discussion discussion, String user) {
+		int id_user=atoi(user);
+		try {
+				communication.get(id_user).write(discussion.toString()+"\n");
+				communication.get(id_user).flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// Permet de recuperer un message identifie avec son id dans la base de donnees
 	private Message getMessage(int id) {
 		
@@ -532,8 +539,8 @@ public class Server implements Runnable{
 	
 	protected void refresh(String user) {
 		int id_user=atoi(user);
-		//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
-		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
+		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
+		LinkedList<String> unviewedmessage=getAllMessage(id_user);
 		if(unviewedmessage!=null) {
 			for(String message : unviewedmessage) {
 				try {
@@ -556,40 +563,8 @@ public class Server implements Runnable{
 		
 		
 	}
-	
-	protected void disconnectUser(int id) {
-		communication.remove(id);
-		
-	}
-	
-	protected boolean matchpassword(int id_user, String password_test){
-		return password_test.equals(getPassword(id_user));
-	}
-	
-	private String getPassword(int id_user) {
-		
-		String password = "";
-		Connection con;
-		
-		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
-			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Password FROM bdd_projet_s5.user");
-			while (rst.next()) {
-				int idU = rst.getInt("IdU");
-				if (idU == id_user) {
-					password = rst.getString("Password");
-				}
-			}
-			con.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return password;
-	}
-	
-	// Les deux String doivent correspondre aux id. String user sert Ã  rien
+
+	// Les deux String doivent correspondre aux id. String user sert �  rien
 	private void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
@@ -820,8 +795,8 @@ public class Server implements Runnable{
 		}
 	}
 
-	// renvoie l'id de l'user ajouté
-	protected int adduserBDD(String user, String password) {
+	// renvoie l'id de l'user ajout�
+protected int adduserBDD(String user, String password) {
 		
 		Connection con;
 		int nbu = 0;
@@ -853,7 +828,7 @@ public class Server implements Runnable{
 		return nbu;
 	}
 
-	// renvoie l'id du groupe ajouté
+	// renvoie l'id du groupe ajout�
 	protected int addGroupBDD(String name) {
 		
 		Connection con;
@@ -912,7 +887,6 @@ public class Server implements Runnable{
 			temp.flush();
 		}
 	}
-
 	public List<Group> getAllGroup(){
 		
 		List<Group> lg = new ArrayList<>();
@@ -951,11 +925,34 @@ public class Server implements Runnable{
 		
 		return lg;
 	}
+
 	
-	private boolean matchUserPassword(String user, String password, String id) {
-		return false;
+	protected boolean matchpassword(int id_user, String password_test){
+		return password_test.equals(getPassword(id_user));
 	}
 	
+	private String getPassword(int id_user) {
+		
+		String password = "";
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Password FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id_user) {
+					password = rst.getString("Password");
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return password;
+	}
 	public static void main(String[] args){
 		Server c = new Server();
 		Thread t = new Thread(c);
