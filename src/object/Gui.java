@@ -158,19 +158,31 @@ public class Gui {
 		}
 	}
 	
+	
+	private User getUser(List<User> group, int id) {
+		for (User u : group) {
+			if (u.getId() == id) {
+				return u;
+			}
+		}
+		return null;
+	}
+	
+	
 	private void displayContent() {
 		int index = list.getSelectedIndex();
 		int idDiscussion = list_id.get(index);
 		Discussion discussion = user.getDiscussion(idDiscussion); 
+		List<User> group = discussion.getGroup();
 		
 		displayArea.setText("");
 		
 		for (Message m : discussion.getMessages()) {
 			String messageContent = m.getMessage();
-			System.out.println(messageContent);
-			String messageAuthor = "alo?";
+			int id = m.getId();
+			User messageAuthor = getUser(group, id);
 			
-			displayArea.append("["+messageAuthor+"]"+" :"+"\n");
+			displayArea.append("["+messageAuthor.getNameUser()+"]"+" :"+"\n");
 			
 			displayArea.append(messageContent+"\n");
 			
