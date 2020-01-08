@@ -48,6 +48,9 @@ public class Discussion implements Comparable<Discussion>{
 	public void setGroup(Group group) {
 		this.group = group.getGroup();
 	}
+	public void debug_addMessage(Message message) {
+		messages.add(message);
+	}
 
 	@Override
 	public String toString() {
