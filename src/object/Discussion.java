@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class Discussion {
+public class Discussion implements Comparable<Discussion>{
 	private String name;
 	private TreeSet<Message> messages = new TreeSet<>();
 	private List<User> group = new ArrayList<>();
@@ -22,6 +22,12 @@ public class Discussion {
 		this.messages = messages;
 		this.group = group;
 		this.id_Conv = id_Conv;
+	}
+	
+	public int compareTo(Discussion d) {
+		Message a = this.messages.last();
+		Message b = d.messages.last();
+		return a.compareTo(b);
 	}
 
 	public TreeSet<Message> getMessages() {
