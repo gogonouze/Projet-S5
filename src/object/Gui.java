@@ -60,6 +60,7 @@ public class Gui {
 	
 	private final Action newDiscussion = new SwingAction();
 	private final Action Send = new SwingAction_1();
+	private final Action action = new SwingAction_2();
 	
 	
 	/**
@@ -113,6 +114,10 @@ public class Gui {
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.setAction(newDiscussion);
 		panel_1.add(btnNewButton);
+		
+		JButton refreshButton = new JButton("New button");
+		refreshButton.setAction(action);
+		panel_1.add(refreshButton);
 		
 		list = new JList();		
 		list.addMouseListener(new MouseAdapter() {
@@ -171,6 +176,8 @@ public class Gui {
 	}
 	
 	private void updateDiscussionsList() {
+		list_id.clear();
+		model.clear();
 		for(Discussion d : user.getDiscussions()) {
 			list_id.add(d.getId());
 			model.addElement(d.getName());
@@ -225,6 +232,7 @@ public class Gui {
 			} else {
 				displayBlank();
 			}
+			
 		}
 		
 	}
@@ -266,6 +274,15 @@ public class Gui {
 			Discussion discussion = user.getDiscussion(idDiscussion); 
 			user.sendMessage(messageArea.getText(), discussion);
 			messageArea.setText("");
+		}
+	}
+	private class SwingAction_2 extends AbstractAction {
+		public SwingAction_2() {
+			putValue(NAME, "refresh");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+			updateDiscussionsList();
 		}
 	}
 }

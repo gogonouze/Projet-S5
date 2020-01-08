@@ -153,7 +153,7 @@ public class PopUp_NewDiscussion extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			String message = textArea.getText();
 			int index = comboBox.getSelectedIndex();
-			int id = list_id.get(index); 
+			int id = list_id.get(index);
 					
 			user.createConversation(message, message, user.getGroupFromAllGroup(id));
 		}
