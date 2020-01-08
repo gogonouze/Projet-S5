@@ -6,6 +6,8 @@ import object.Group;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -14,9 +16,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.SwingConstants;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,15 +29,17 @@ import java.awt.Dialog.ModalityType;
 public class PopUp_NewDiscussion extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JComboBox comboBox;
 	private JTextArea textArea;
-	JButton okButton;
+	private JButton okButton;
+	
+	private JComboBox<String> comboBox;
+	private List<Integer> list_id = new ArrayList<>();
+	
 	
 	Timer t = new Timer();
 	
 	private User user;
-	private List<Group> allGroup;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -53,8 +59,6 @@ public class PopUp_NewDiscussion extends JDialog {
 	 */
 	public PopUp_NewDiscussion(User user) {
 		this.user = user;
-		this.allGroup = user.();
-		
 		
 		setAlwaysOnTop(true);
 		setType(Type.POPUP);
@@ -75,6 +79,10 @@ public class PopUp_NewDiscussion extends JDialog {
 			
 			
 		comboBox = new JComboBox();
+		for (Group g : user.getAllGroup()) {
+			list_id.add(g.getiD_group());
+			comboBox.addItem(g.getName());
+		}
 		panel.add(comboBox);
 			
 		

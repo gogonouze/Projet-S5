@@ -19,6 +19,10 @@ public class Group implements Comparable<Group>{
 		return iD_group;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 	public List<User> getGroup() {
 		return group;
 	}
