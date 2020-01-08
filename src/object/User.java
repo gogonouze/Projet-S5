@@ -22,6 +22,14 @@ public abstract class User {
 	public List<Group> getAllGroup() {
 		return allGroup;
 	}
+	public Group getGroupFromAllGroup(int id) {
+		for(Group g : allGroup) {
+			if(g.getiD_group()==id) {
+				return g;
+			}
+		}
+		return null;
+	}
 
 	private static final int PORT = 8952;
 	Socket socket;
