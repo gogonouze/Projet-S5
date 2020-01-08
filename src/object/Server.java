@@ -874,6 +874,45 @@ public class Server implements Runnable{
 		}
 	}
 
+	public List<Group> getAllGroup(){
+		
+		List<Group> lg = new ArrayList<>();
+		List<User> lu;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdG ," + "Name FROM bdd_projet_s5.groupe");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				String name = rst.getString("Name");
+				lu = new ArrayList<>();
+				try {
+					Statement stmt2 = con.createStatement();
+					ResultSet rst2 = stmt2.executeQuery("SELECT IdU ," + "IdG FROM bdd_projet_s5.appartenirug");
+					while (rst2.next()) {
+						int idG2 = rst2.getInt("IdG");
+						if (idG2 == idG) {
+							int idU = rst2.getInt("IdU");
+							lu.add(getUser(idU));
+						}
+					}
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Group g = new Group(name, idG, lu);
+				lg.add(g);
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return lg;
+	}
+	
 	public static void main(String[] args){
 		Server c = new Server();
 		Thread t = new Thread(c);

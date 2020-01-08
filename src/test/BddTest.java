@@ -549,6 +549,45 @@ public class BddTest {
 		return l;
 	}
 	
+	private static List<Group> getAllGroup(){
+		
+		List<Group> lg = new ArrayList<>();
+		List<User> lu;
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdG ," + "Name FROM bdd_projet_s5.groupe");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				String name = rst.getString("Name");
+				lu = new ArrayList<>();
+				try {
+					Statement stmt2 = con.createStatement();
+					ResultSet rst2 = stmt2.executeQuery("SELECT IdU ," + "IdG FROM bdd_projet_s5.appartenirug");
+					while (rst2.next()) {
+						int idG2 = rst2.getInt("IdG");
+						if (idG2 == idG) {
+							int idU = rst2.getInt("IdU");
+							lu.add(getUser(idU));
+						}
+					}
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Group g = new Group(name, idG, lu);
+				lg.add(g);
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return lg;
+	}
+	
 	public static void main(String[] args) {
 		
 		isconnected(1);
@@ -581,7 +620,7 @@ public class BddTest {
 		//updateLeaveConv(1, 1);
 		//updateRejoinConv(1, 1);
 		
-		int idG = addGroupBDD("projet");
+		/*int idG = addGroupBDD("projet");
 		int idR = adduserBDD("Romain");
 		int idM = adduserBDD("Maxime");
 		adduserGBDD(idR, idG);
@@ -598,7 +637,10 @@ public class BddTest {
 		updateBDDMessage(R, D, "On se retrouve pour une nouvelle vidéo dégustation");
 		updateBDDMessage(M, D, "Ho ho bonjour à tous !");
 		updateBDDMessage(R, D2, "Je viens de faire une nouvelle vidéo");
-		System.out.println(getAllMessage(idM).toString());
+		System.out.println(getAllMessage(idM).toString());*/
+		
+		//addGroupBDD("g2");
+		System.out.println(getAllGroup().toString());
 	}
 	
 }
