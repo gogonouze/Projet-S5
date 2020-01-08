@@ -285,6 +285,24 @@ public class Server implements Runnable{
 																					input=input.replaceFirst("@disconnect@", "");
 																					disconnectUser(atoi(input));
 																				}
+																				else {
+																					if(input.startsWith("@createGroup@")) {
+																						input=input.replaceFirst("@createGroup@", "");
+																						String nameGroup="";
+																						String temp="";
+																						int id_user=0;
+																						for(char car : input.toCharArray()) {
+																							if(car=='@') {
+																								nameGroup=temp;
+																							}
+																							else {
+																								temp.concat(Character.toString(car));
+																							}
+																						}
+																						id_user=atoi(temp);
+																						addGroup(nameGroup,id_user);
+																					}
+																				}
 																			}
 																		}
 																	}
@@ -307,6 +325,8 @@ public class Server implements Runnable{
 					}
 
 					
+
+					
 				});
 				t.start();
 			}
@@ -318,7 +338,19 @@ public class Server implements Runnable{
 		communication.remove(id);
 		
 	}
-
+	
+	private void addGroup(String nameGroup, int id_user) {
+		int id_group = addGroupBDD(nameGroup);
+		adduserGBDD(id_user, id_group);
+		try {
+			communication.get(id_user).write(id_group+"\n");
+			communication.get(id_user).flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	protected void sendAllGroup(int id) {
 		List<Group> zbreh= getAllGroup();
