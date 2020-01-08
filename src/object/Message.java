@@ -17,7 +17,7 @@ public class Message implements Comparable<Message>{
 		Date date = new Date();
 		dateCreation = format.format(date);
 	}
-
+	
 	public Message(String message, Status status, String dateCreation, int id, int nbVu) {
 		this.message = message;
 		this.status = status;
@@ -52,7 +52,11 @@ public class Message implements Comparable<Message>{
 	}
 	
 	public int compareTo(Message m) {
-		return dateCreation.compareTo(m.getDateCreation());
+		int cmpT = dateCreation.compareTo(m.getDateCreation());
+		if (cmpT == 0) {
+			return getId()-m.getId();
+		}
+		return cmpT;
 	}
 	
 	public int getNbVu() {

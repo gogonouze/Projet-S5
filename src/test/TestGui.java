@@ -2,6 +2,7 @@ package test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import object.Client;
 import object.Discussion;
@@ -19,13 +20,13 @@ public class TestGui {
 		users.add(user);
 		Group group = new Group("alo", 12, users);
 		
-		Discussion d = new Discussion("alo", group, new Message("pute"));
+		Discussion d = new Discussion("alo", group, new Message("pute"), 1);
 		
 		Message m = new Message("ta daronne la chaudasse");
 		
 		d.debug_addMessage(m);
 		
-		user.debug_addDiscussion(new Discussion("oh", group, new Message("")));
+		user.debug_addDiscussion(new Discussion("oh", group, new Message(""), 2));
 		
 		user.debug_addDiscussion(d);
 		
@@ -35,8 +36,8 @@ public class TestGui {
 		
 		System.out.println(d.toString());
 		
-		user.debug_addDiscussion(new Discussion("ah", group, new Message("")));
-		user.debug_addDiscussion(new Discussion("putaing", group, new Message("alo sale chien")));
+		user.debug_addDiscussion(new Discussion("ah", group, new Message(""), 3));
+		user.debug_addDiscussion(new Discussion("putaing", group, new Message("alo sale chien"),142));
 		
 		Gui.launch(user);
 	}
