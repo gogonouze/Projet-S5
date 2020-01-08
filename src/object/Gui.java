@@ -7,11 +7,9 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 
 import gui_element.PopUp_NewDiscussion;
-
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -24,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.TimerTask;
+import java.util.Timer;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
@@ -46,6 +45,8 @@ public class Gui {
 	private JTextArea displayArea;
 	private JFrame frame;
 	private User user;
+
+	Timer t = new Timer();
 	
 	private JList<String> list;
 	private List<Integer> list_id = new ArrayList<>();
@@ -154,6 +155,7 @@ public class Gui {
 		
 		updateDiscussionsList();
 		list.setModel(model);
+		t.schedule(new Display(), 1,300);
 	}
 	
 	private void updateDiscussionsList() {
@@ -199,7 +201,7 @@ public class Gui {
 		displayArea.setText("");
 	}
 	
-	private class display extends TimerTask {
+	private class Display extends TimerTask {
 		
 		@Override
 		public void run() {
@@ -234,9 +236,8 @@ public class Gui {
 			int index = list.getSelectedIndex();
 			int idDiscussion = list_id.get(index);
 			Discussion discussion = user.getDiscussion(idDiscussion); 
-			messageArea.setText("");
-			
 			user.sendMessage(messageArea.getText(), discussion);
+			messageArea.setText("");
 		}
 	}
 }

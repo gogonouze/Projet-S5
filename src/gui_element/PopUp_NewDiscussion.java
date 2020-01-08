@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
+import java.util.TimerTask;
 import java.awt.Dialog.ModalityType;
 
 public class PopUp_NewDiscussion extends JDialog {
@@ -23,6 +24,7 @@ public class PopUp_NewDiscussion extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JComboBox comboBox;
 	private JTextArea textArea;
+	JButton okButton;
 	
 	private User user;
 
@@ -81,7 +83,7 @@ public class PopUp_NewDiscussion extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Send");
+				okButton = new JButton("Send");
 				okButton.setEnabled(false);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
@@ -93,9 +95,21 @@ public class PopUp_NewDiscussion extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		
 	}
 	
-	
+	private class SendEnable extends TimerTask {
+		
+		@Override
+		public void run() {
+			if (!"".equals(textArea.getText())) {
+				okButton.setEnabled(true);
+			} else {
+				okButton.setEnabled(false);
+			}
+		}
+		
+	}
 	
 	
 	
