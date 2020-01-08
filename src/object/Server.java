@@ -344,7 +344,7 @@ public class Server implements Runnable{
 
 
 	protected void create_user(String user, String password, Socket s) {
-		Integer id = adduserBDD(user);
+		Integer id = adduserBDD(user, password);
 		try {
 			communication.put(id, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
 		} catch (IOException e1) {
