@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.TimerTask;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
@@ -101,7 +102,7 @@ public class Gui {
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				displayContent();
+				
 			}
 		});
 		list.setBackground(Color.WHITE);
@@ -187,10 +188,23 @@ public class Gui {
 			displayArea.append(messageContent+"\n");
 			
 			displayArea.append("=-=-=-="+"\n");
+		}		
+	}
+	
+	private void displayBlank() {
+		displayArea.setText("");
+	}
+	
+	private class display extends TimerTask {
 		
-			
+		@Override
+		public void run() {
+			if (!list.isSelectionEmpty()) {
+				displayContent();
+			} else {
+				displayBlank();
+			}
 		}
-		
 		
 	}
 	
@@ -216,10 +230,9 @@ public class Gui {
 			int index = list.getSelectedIndex();
 			int idDiscussion = list_id.get(index);
 			Discussion discussion = user.getDiscussion(idDiscussion); 
+			messageArea.setText("");
 			
 			user.sendMessage(messageArea.getText(), discussion);
-			
-			messageArea.setText("");
 		}
 	}
 }
