@@ -299,16 +299,6 @@ public abstract class User {
 		return discussions;
 	}
 	
-	public void debug_addDiscussion(Discussion discussion) {
-		discussions.add(discussion);
-	}
-	public Discussion getDiscussion(int i) {
-		for (Discussion d : this.discussions) {
-			if (d.getId() == i) 
-				return d;
-		}
-		return null;
-	}
 	private class Refresh extends TimerTask {
 
 		@Override
@@ -402,6 +392,7 @@ public abstract class User {
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
+	
 	private class Refresh extends TimerTask {
 
 		@Override
