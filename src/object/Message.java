@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message implements Comparable<Message>{
-	private static int nbMessage = 0;
-	
 	String message;
 	Status status = Status.wait;
 	String dateCreation;
@@ -18,8 +16,6 @@ public class Message implements Comparable<Message>{
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		dateCreation = format.format(date);
-		this.id = nbMessage;
-		nbMessage++;
 	}
 
 	public Message(String message, Status status, String dateCreation, int id, int nbVu) {

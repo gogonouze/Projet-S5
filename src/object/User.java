@@ -2,6 +2,7 @@ package object;
 import java.io.*;
 import java.net.*;
 import java.util.NavigableSet;
+import java.util.Timer;
 import java.util.TreeSet;
 
 
@@ -15,7 +16,7 @@ public abstract class User implements Runnable{
 	private static final int PORT = 8952;
 	private int PORT_RECEPTION;
 	Socket socket;
-	Timer t= new Timer();
+	Timer t = new Timer();
 	public User(String name) {
 		this.name = name;
 		try {

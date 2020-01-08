@@ -2,6 +2,7 @@ package test;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -111,7 +112,7 @@ public class BddTest {
 					name = rst.getString("Name");
 				}
 			}
-			
+			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -207,21 +208,38 @@ public class BddTest {
 		return d;
 	}
 
-	private static void addDiscussion(String discussion, Group group, int id) {
+	private static int addDiscussion(String discussion, Group group) {
 		
 		Connection con;
 		int idU;
+		int id = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbD FROM bdd_projet_s5.discussion");
+			if (rst.next()) {
+				id = rst.getInt("NbD") + 1;
+			}
+			else {
+				id = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate("INSERT INTO discussion (IdD, Name) VALUES ('" + id + "', '" + discussion + "')");
+			stmt.executeUpdate("UPDATE discussion SET nbD = " + id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		for (User u : group.getGroup()) {
-			idU = u.getPort();
+			idU = u.getId();
 			try {
 				con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 				Statement stmt = con.createStatement();
@@ -230,9 +248,11 @@ public class BddTest {
 				e.printStackTrace();
 			}
 		}
+		
+		return id;
 	}
 	
-	private static void updateStatus(String message, String user) {
+	private static void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
 		Message m = getMessage(idm);
@@ -311,6 +331,224 @@ public class BddTest {
 		return nbu;
 	}
 	
+	private static int updateBDDMessage(User user, Discussion discussion, String message) {
+		
+		Connection con;
+		int nbm = 0;
+		Message m = new Message(message);
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbM FROM bdd_projet_s5.message");
+			if (rst.next()) {
+				nbm = rst.getInt("NbM") + 1;
+			}
+			else {
+				nbm = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO message (IdM, Content, IsRead, Time, IdU, IdD) VALUES ('" + nbm + "', '" + message + "', '" + 0 + "', '" + m.getDateCreation() + "', '" + user.getId() + "', '" + discussion.getId() + "')");
+			stmt.executeUpdate("UPDATE message SET nbM = " + nbm);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbm;
+	}
+	
+	private static int addGroupBDD(String name) {
+		
+		Connection con;
+		int nbg = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbG FROM bdd_projet_s5.groupe");
+			if (rst.next()) {
+				nbg = rst.getInt("NbG") + 1;
+			}
+			else {
+				nbg = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO groupe (IdG, Name) VALUES ('" + nbg + "', '" + name + "')");
+			stmt.executeUpdate("UPDATE groupe SET nbG = " + nbg);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbg;
+	}
+	
+	private static void adduserGBDD(int idUser, int idGroup) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO appartenirug (IdU, IdG) VALUES ('" + idUser + "', '" + idGroup + "')");
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private static void deleteuserGBDD(int idUser, int idGroup) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("DELETE FROM appartenirug WHERE IdU = " + idUser + " AND IdG = " + idGroup);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private static Group getGroupBDD(int id) {
+		
+		Group g = null;
+		String name = "";
+		List<User> group =new ArrayList<User>();
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdG ," + "Name FROM bdd_projet_s5.groupe");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				if (idG == id) {
+					name = rst.getString("Name");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IdG FROM bdd_projet_s5.appartenirug");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				if (idG == id) {
+					group.add(getUser(rst.getInt("IdU")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		g = new Group(name, id, group);
+		
+		return g;
+	}
+	
+	private static void updateLeaveConv(int idUser, int idDiscussion) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("DELETE FROM appartenirud WHERE IdU = " + idUser + " AND IdD = " + idDiscussion);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private static void updateRejoinConv(int idUser, int idDiscussion) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO appartenirud (IdU, IdD) VALUES ('" + idUser + "', '" + idDiscussion + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static LinkedList<String> getAllMessage(int id) {
+		
+		Connection con;
+		LinkedList<String> l = new LinkedList<>();
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU, " + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					int idD = rst.getInt("IdD");
+					try {
+						Statement stmt2 = con.createStatement();
+						ResultSet rst2 = stmt2.executeQuery("SELECT IdU, " + "IdD, " + "Content, " + "Time FROM bdd_projet_s5.message");
+						while (rst2.next()) {
+							int idD2 = rst2.getInt("IdD");
+							if (idD2 == idD) {
+								int idU2 = rst2.getInt("IdU");
+								if (idU2 != idU) {
+									try {
+										Statement stmt3 = con.createStatement();
+										ResultSet rst3 = stmt3.executeQuery("SELECT Name, " + "IdU FROM bdd_projet_s5.user");
+										while (rst3.next()) {
+											int idU3 = rst3.getInt("IdU");
+											if (idU3 == idU2) {
+												String name = rst3.getString("Name");
+												String content = rst2.getString("Content");
+												String time = rst2.getString("Time");
+												String chaine = "@" + name + "@" + idD + "@" + content + "@" + time;
+												l.add(chaine);
+											}
+										}
+										
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+						
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return l;
+	}
+	
 	public static void main(String[] args) {
 		
 		isconnected(1);
@@ -318,18 +556,49 @@ public class BddTest {
 		//getUser(1);
 		//getDiscussion(1);
 		
-		Group g = new Group();
-		g.group.add(getUser(1));
-		g.group.add(getUser(2));
-		System.out.println(g.toString());
-		//addDiscussion("Projet", g, 2);
-		
 		//updateStatus("1", "1");
 		//updateStatus("1", "1");
 		
-		adduserBDD("Maxime");
-		User u = getUser(1);
-		System.out.println(u.toString());
+		//adduserBDD("Maxime");
+		//User u = getUser(1);
+		//System.out.println(u.toString());
+		
+
+		//g.group.add(getUser(2));
+		//System.out.println(g.toString());
+		//addDiscussion("projet", g);
+		//updateBDDMessage(getUser(1), getDiscussion(1), "Salut à tous les amis !");
+		//System.out.println(getMessage(1));
+		//updateStatus("1");
+		//System.out.println(getDiscussion(2));
+		
+		//addGroupBDD("fac");
+		//adduserGBDD(1, 1);
+		//adduserBDD("Romain");
+		
+		//deleteuserGBDD(1, 1);
+		//System.out.println(getGroupBDD(1));
+		//updateLeaveConv(1, 1);
+		//updateRejoinConv(1, 1);
+		
+		int idG = addGroupBDD("projet");
+		int idR = adduserBDD("Romain");
+		int idM = adduserBDD("Maxime");
+		adduserGBDD(idR, idG);
+		adduserGBDD(idM, idG);
+		Group g = getGroupBDD(idG);
+		int idD = addDiscussion("disc_projet", g);
+		int idD2 = addDiscussion("tuto_minecraft", g);
+		User R = getUser(idR);
+		User M = getUser(idM);
+		Discussion D = getDiscussion(idD);
+		Discussion D2 = getDiscussion(idD2);
+		updateBDDMessage(R, D, "Salut à tous les amis !");
+		updateBDDMessage(R, D, "Vous allez bien ?");
+		updateBDDMessage(R, D, "On se retrouve pour une nouvelle vidéo dégustation");
+		updateBDDMessage(M, D, "Ho ho bonjour à tous !");
+		updateBDDMessage(R, D2, "Je viens de faire une nouvelle vidéo");
+		System.out.println(getAllMessage(idM).toString());
 	}
 	
 }

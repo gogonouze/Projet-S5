@@ -445,15 +445,33 @@ public class Server implements Runnable{
 		return d;
 	}
 	
-	protected void addDiscussion(String discussion, Group group, int id) {
+	// renvoie l'id de la discussion
+	protected int addDiscussion(String discussion, Group group) {
 		
 		Connection con;
 		int idU;
+		int id = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbD FROM bdd_projet_s5.discussion");
+			if (rst.next()) {
+				id = rst.getInt("NbD") + 1;
+			}
+			else {
+				id = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate("INSERT INTO discussion (IdD, Name) VALUES ('" + id + "', '" + discussion + "')");
+			stmt.executeUpdate("UPDATE discussion SET nbD = " + id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -468,6 +486,8 @@ public class Server implements Runnable{
 				e.printStackTrace();
 			}
 		}
+		
+		return id;
 	}
 	
 	// actuellement tous les User sont des clients
@@ -536,7 +556,7 @@ public class Server implements Runnable{
 	}
 
 	// Les deux String doivent correspondre aux id. String user sert à rien
-	private void updateStatus(String message, String user) {
+	private void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
 		Message m = getMessage(idm);
@@ -581,32 +601,192 @@ public class Server implements Runnable{
 		}
 	}
 
-	private LinkedList<String> getAllUnviewedMessage(String user) {
-		// TODO Auto-generated method stub
-		// C'est pas personnel les message non vu 
-		return null;
+	private LinkedList<String> getAllMessage(int id) {
+		
+		Connection con;
+		LinkedList<String> l = new LinkedList<>();
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU, " + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					int idD = rst.getInt("IdD");
+					try {
+						Statement stmt2 = con.createStatement();
+						ResultSet rst2 = stmt2.executeQuery("SELECT IdU, " + "IdD, " + "Content, " + "Time FROM bdd_projet_s5.message");
+						while (rst2.next()) {
+							int idD2 = rst2.getInt("IdD");
+							if (idD2 == idD) {
+								int idU2 = rst2.getInt("IdU");
+								if (idU2 != idU) {
+									try {
+										Statement stmt3 = con.createStatement();
+										ResultSet rst3 = stmt3.executeQuery("SELECT Name, " + "IdU FROM bdd_projet_s5.user");
+										while (rst3.next()) {
+											int idU3 = rst3.getInt("IdU");
+											if (idU3 == idU2) {
+												String name = rst3.getString("Name");
+												String content = rst2.getString("Content");
+												String time = rst2.getString("Time");
+												String chaine = "@" + name + "@" + idD + "@" + content + "@" + time;
+												l.add(chaine);
+											}
+										}
+										
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+						
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return l;
 	}
 
-	protected void updateLeaveConv(String user, String discussion) {
-		// TODO Auto-generated method stub
-		// Mais c'est une conv de groupe, tu dois pas quiter le groupe ?
-	}
-
-	protected void updateBDDMessage(String user, String group, String message) {
-		// ajout message Ã  bdd, si il y est dejÃ  le message est lu
-		// Il est lu pour tout le monde
-	}
-
-	protected void deleteuserGBDD(String user, String group) {
-		// delete un user d'un groupe
+	protected void updateLeaveConv(int idUser, int idDiscussion) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("DELETE FROM appartenirud WHERE IdU = " + idUser + " AND IdD = " + idDiscussion);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
-	protected void adduserGBDD(String user, String group) {
-		// ajoute un user Ã  un groupe
+	protected void updateRejoinConv(int idUser, int idDiscussion) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO appartenirud (IdU, IdD) VALUES ('" + idUser + "', '" + idDiscussion + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// renvoie l'id du message
+	protected int updateBDDMessage(User user, Discussion discussion, String message) {
+		
+		Connection con;
+		int nbm = 0;
+		Message m = new Message(message);
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbM FROM bdd_projet_s5.message");
+			if (rst.next()) {
+				nbm = rst.getInt("NbM") + 1;
+			}
+			else {
+				nbm = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO message (IdM, Content, IsRead, Time, IdU, IdD) VALUES ('" + nbm + "', '" + message + "', '" + 0 + "', '" + m.getDateCreation() + "', '" + user.getId() + "', '" + discussion.getId() + "')");
+			stmt.executeUpdate("UPDATE message SET nbM = " + nbm);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbm;
+	}
+
+	protected Group getGroupBDD(int id) {
+		
+		Group g = null;
+		String name = "";
+		List<User> group =new ArrayList<User>();
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdG ," + "Name FROM bdd_projet_s5.groupe");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				if (idG == id) {
+					name = rst.getString("Name");
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IdG FROM bdd_projet_s5.appartenirug");
+			while (rst.next()) {
+				int idG = rst.getInt("IdG");
+				if (idG == id) {
+					group.add(getUser(rst.getInt("IdU")));
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		g = new Group(name, id, group);
+		
+		return g;
+	}
+	
+	protected void deleteuserGBDD(int idUser, int idGroup) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("DELETE FROM appartenirug WHERE IdU = " + idUser + " AND IdG = " + idGroup);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
+	protected void adduserGBDD(int idUser, int idGroup) {
+		
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO appartenirug (IdU, IdG) VALUES ('" + idUser + "', '" + idGroup + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// renvoie l'id de l'user ajout�
 	protected int adduserBDD(String user) {
 		
 		Connection con;
@@ -617,11 +797,9 @@ public class Server implements Runnable{
 			Statement stmt = con.createStatement();
 			ResultSet rst = stmt.executeQuery("SELECT NbU FROM bdd_projet_s5.user");
 			if (rst.next()) {
-				System.out.println("Dans le if");
 				nbu = rst.getInt("NbU") + 1;
 			}
 			else {
-				System.out.println("Dans le else");
 				nbu = 1;
 			}
 			
@@ -641,6 +819,39 @@ public class Server implements Runnable{
 		return nbu;
 	}
 
+	// renvoie l'id du groupe ajout�
+	protected int addGroupBDD(String name) {
+		
+		Connection con;
+		int nbg = 0;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT NbG FROM bdd_projet_s5.groupe");
+			if (rst.next()) {
+				nbg = rst.getInt("NbG") + 1;
+			}
+			else {
+				nbg = 1;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT INTO groupe (IdG, Name) VALUES ('" + nbg + "', '" + name + "')");
+			stmt.executeUpdate("UPDATE groupe SET nbG = " + nbg);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return nbg;
+	}
+	
 	protected void connect_user(String user, Socket s) throws IOException {
 		boolean is_present =false;
 		for (User u : communication.keySet()) {
