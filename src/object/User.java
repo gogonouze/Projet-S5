@@ -183,6 +183,19 @@ public abstract class User {
 			}
 		t.schedule(new Refresh(),1,100);
 	}
+	public void disconnect(){
+		try {
+			output.write("@disconnect@"+id+"\n");
+			output.close();
+			input.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try{
+			socket.close();
+		}catch(IOException e){e.printStackTrace();}
+	}
 	public void requestGroup() {
 		try {
 			output.write("@requestGroup@"+id);
