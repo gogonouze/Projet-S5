@@ -9,9 +9,7 @@ import object.User;
 public class Main {
 
 	public static void main(String[] args) {
-		Server c = new Server();
-		Thread t = new Thread(c);
-		t.start();
+		System.out.println("test\n");
 		User gerard = new Client("gerard");
 		User arouf = new Client("Arouf");
 		gerard.create_account(gerard.getNameUser(), "NarutoRunner");
