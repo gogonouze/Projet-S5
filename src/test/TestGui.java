@@ -33,8 +33,8 @@ public class TestGui {
 		
 		System.out.println(d.toString());
 		
-		user.debug_addDiscussion(new Discussion("ah", 5515, new Message("")));
-		user.debug_addDiscussion(new Discussion("putaing", 377, new Message("alo sale chien")));
+		user.debug_addDiscussion(new Discussion("ah", group, new Message("")));
+		user.debug_addDiscussion(new Discussion("putaing", group, new Message("alo sale chien")));
 		
 		Gui.launch(user);
 	}
