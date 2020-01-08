@@ -8,19 +8,20 @@ public class Message implements Comparable<Message>{
 	String message;
 	Status status = Status.wait;
 	String dateCreation;
-	String proprio;
-	public Message(String message, Status status, String dateCreation, String proprio, int id) {
+	int idAuthor;
+	private int id;
+	private int nbVu = 0;
+	
+	
+	public Message(String message, Status status, String dateCreation, int idAuthor, int id) {
 		super();
 		this.message = message;
 		this.status = status;
 		this.dateCreation = dateCreation;
-		this.proprio = proprio;
+		this.idAuthor = idAuthor;
 		this.id = id;
 	}
 
-	private int id;
-	private int nbVu = 0;
-	
 	public Message(String message) {
 		this.message = message;
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -28,12 +29,13 @@ public class Message implements Comparable<Message>{
 		dateCreation = format.format(date);
 	}
 	
-	public Message(String message, Status status, String dateCreation, int id, int nbVu) {
+	public Message(String message, int idAuthor, int id) {
 		this.message = message;
-		this.status = status;
-		this.dateCreation = dateCreation;
 		this.id = id;
-		this.nbVu = nbVu;
+		this.idAuthor = idAuthor;
+		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		dateCreation = format.format(date);
 	}
 
 	public boolean received(int lenghtGroup) {
@@ -59,6 +61,10 @@ public class Message implements Comparable<Message>{
 	
 	public String getDateCreation() {
 		return dateCreation;
+	}
+	
+	public int getIdAuthor() {
+		return idAuthor;
 	}
 	
 	public int compareTo(Message m) {

@@ -208,7 +208,7 @@ public class Gui {
 		
 		for (Message m : discussion.getMessages()) {
 			String messageContent = m.getMessage();
-			int id = m.getId();
+			int id = m.getIdAuthor();
 			User messageAuthor = getUser(group, id);
 			
 			displayArea.append("["+messageAuthor.getNameUser()+"]"+" :"+"\n");

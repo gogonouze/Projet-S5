@@ -20,18 +20,18 @@ public class TestGui {
 		users.add(user);
 		Group group = new Group("alo", 12, users);
 		
-		Discussion d = new Discussion("alo", group, new Message("pute"), 1);
+		Discussion d = new Discussion("alo", group, new Message("pute",user.getId(),1), 1);
 		
-		Message m = new Message("ta daronne la chaudasse");
+		Message m = new Message("ta daronne la chaudasse",user.getId(),2);
 		
 		d.debug_addMessage(m);
 		
-		user.debug_addDiscussion(new Discussion("oh", group, new Message(""), 2));
+		user.debug_addDiscussion(new Discussion("oh", group, new Message("",user.getId(),3)));
 		
 		user.debug_addDiscussion(d);
 		
-		d.debug_addMessage(new Message("fisbustier"));
-		d.debug_addMessage(new Message("henri le courtoix"));
+		d.debug_addMessage(new Message("fisbustier",user.getId(),4));
+		d.debug_addMessage(new Message("henri le courtoix",user.getId(),5));
 		
 		
 		System.out.println(d.toString());
