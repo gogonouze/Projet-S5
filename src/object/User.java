@@ -430,7 +430,7 @@ public abstract class User {
 							}
 						}
 						if(!already_read) {
-							d.getMessages().add(new Message(contenu));
+							d.getMessages().add(new Message(contenu,Status.received,date,expediteur,id_message));
 							output.write("@ack@"+id_message);
 						}
 					}

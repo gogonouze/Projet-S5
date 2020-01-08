@@ -8,6 +8,16 @@ public class Message implements Comparable<Message>{
 	String message;
 	Status status = Status.wait;
 	String dateCreation;
+	String proprio;
+	public Message(String message, Status status, String dateCreation, String proprio, int id) {
+		super();
+		this.message = message;
+		this.status = status;
+		this.dateCreation = dateCreation;
+		this.proprio = proprio;
+		this.id = id;
+	}
+
 	private int id;
 	private int nbVu = 0;
 	
