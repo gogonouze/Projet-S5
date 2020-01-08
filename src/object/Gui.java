@@ -9,6 +9,9 @@ import java.awt.GridLayout;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
+
+import gui_element.PopUp_NewDiscussion;
+
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -36,6 +39,7 @@ import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JCheckBox;
 
 public class Gui {
 	
@@ -216,7 +220,7 @@ public class Gui {
 			putValue(SHORT_DESCRIPTION, "Get a new discussion");
 		}
 		public void actionPerformed(ActionEvent e) {
-			
+			PopUp_NewDiscussion.launch(user);
 		}
 	}
 	
