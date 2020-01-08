@@ -601,10 +601,59 @@ public class Server implements Runnable{
 		}
 	}
 
-	private LinkedList<String> getAllUnviewedMessage(String user) {
-		// TODO Auto-generated method stub
-		// C'est pas personnel les message non vu 
-		return null;
+	private LinkedList<String> getAllMessage(int id) {
+		
+		Connection con;
+		LinkedList<String> l = new LinkedList<>();
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU, " + "IdD FROM bdd_projet_s5.appartenirud");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id) {
+					int idD = rst.getInt("IdD");
+					try {
+						Statement stmt2 = con.createStatement();
+						ResultSet rst2 = stmt2.executeQuery("SELECT IdU, " + "IdD, " + "Content, " + "Time FROM bdd_projet_s5.message");
+						while (rst2.next()) {
+							int idD2 = rst2.getInt("IdD");
+							if (idD2 == idD) {
+								int idU2 = rst2.getInt("IdU");
+								if (idU2 != idU) {
+									try {
+										Statement stmt3 = con.createStatement();
+										ResultSet rst3 = stmt3.executeQuery("SELECT Name, " + "IdU FROM bdd_projet_s5.user");
+										while (rst3.next()) {
+											int idU3 = rst3.getInt("IdU");
+											if (idU3 == idU2) {
+												String name = rst3.getString("Name");
+												String content = rst2.getString("Content");
+												String time = rst2.getString("Time");
+												String chaine = "@" + name + "@" + idD + "@" + content + "@" + time;
+												l.add(chaine);
+											}
+										}
+										
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+						
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return l;
 	}
 
 	protected void updateLeaveConv(int idUser, int idDiscussion) {
