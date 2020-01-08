@@ -10,12 +10,20 @@ public class Discussion implements Comparable<Discussion>{
 	private List<User> group = new ArrayList<>();
 	private int id_Conv;
 	
+	public void setId_Conv(int id_Conv) {
+		this.id_Conv = id_Conv;
+	}
+
 	public Discussion(String name, Group group, Message message) {
 		this.name = name;
 		this.group = group.getGroup();
 		messages.add(message);
 	}
 	
+	public int getId_Conv() {
+		return id_Conv;
+	}
+
 	public Discussion(String name, TreeSet<Message> messages, List<User> group, int id_Conv) {
 		super();
 		this.name = name;

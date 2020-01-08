@@ -242,6 +242,10 @@ public abstract class User {
 				if(!present) {
 					allGroup.add(g);
 				}
+				else {
+					allGroup.remove(g);
+					allGroup.add(g);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -293,6 +297,14 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String reponse="";
+		try {
+			reponse = input.readLine();
+			d.setId_Conv(atoi(reponse));
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	public void leaveConversation (Discussion conversation) {
 		try {
