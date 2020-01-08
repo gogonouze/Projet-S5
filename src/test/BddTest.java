@@ -509,10 +509,11 @@ public class BddTest {
 					int idD = rst.getInt("IdD");
 					try {
 						Statement stmt2 = con.createStatement();
-						ResultSet rst2 = stmt2.executeQuery("SELECT IdU, " + "IdD, " + "Content, " + "Time FROM bdd_projet_s5.message");
+						ResultSet rst2 = stmt2.executeQuery("SELECT IdM, " + "IdU, " + "IdD, " + "Content, " + "Time FROM bdd_projet_s5.message");
 						while (rst2.next()) {
 							int idD2 = rst2.getInt("IdD");
 							if (idD2 == idD) {
+								int idM = rst2.getInt("IdM");
 								int idU2 = rst2.getInt("IdU");
 								if (idU2 != idU) {
 									try {
@@ -521,10 +522,10 @@ public class BddTest {
 										while (rst3.next()) {
 											int idU3 = rst3.getInt("IdU");
 											if (idU3 == idU2) {
-												String name = rst3.getString("Name");
+												//String name = rst3.getString("Name");
 												String content = rst2.getString("Content");
 												String time = rst2.getString("Time");
-												String chaine = "@" + name + "@" + idD + "@" + content + "@" + time;
+												String chaine = "@" + idU2 + "@" + idD + "@" + time + "@" + idM + "@" + content	;
 												l.add(chaine);
 											}
 										}
@@ -613,59 +614,8 @@ public class BddTest {
 	
 	public static void main(String[] args) {
 		
-		isconnected(1);
-		//getMessage(1);
-		//getUser(1);
-		//getDiscussion(1);
-		
-		//updateStatus("1", "1");
-		//updateStatus("1", "1");
-		
-		//adduserBDD("Maxime");
-		//User u = getUser(1);
-		//System.out.println(u.toString());
-		
 
-		//g.group.add(getUser(2));
-		//System.out.println(g.toString());
-		//addDiscussion("projet", g);
-		//updateBDDMessage(getUser(1), getDiscussion(1), "Salut à tous les amis !");
-		//System.out.println(getMessage(1));
-		//updateStatus("1");
-		//System.out.println(getDiscussion(2));
-		
-		//addGroupBDD("fac");
-		//adduserGBDD(1, 1);
-		//adduserBDD("Romain");
-		
-		//deleteuserGBDD(1, 1);
-		//System.out.println(getGroupBDD(1));
-		//updateLeaveConv(1, 1);
-		//updateRejoinConv(1, 1);
-		
-		/*int idG = addGroupBDD("projet");
-		int idR = adduserBDD("Romain");
-		int idM = adduserBDD("Maxime");
-		adduserGBDD(idR, idG);
-		adduserGBDD(idM, idG);
-		Group g = getGroupBDD(idG);
-		int idD = addDiscussion("disc_projet", g);
-		int idD2 = addDiscussion("tuto_minecraft", g);
-		User R = getUser(idR);
-		User M = getUser(idM);
-		Discussion D = getDiscussion(idD);
-		Discussion D2 = getDiscussion(idD2);
-		updateBDDMessage(R, D, "Salut à tous les amis !");
-		updateBDDMessage(R, D, "Vous allez bien ?");
-		updateBDDMessage(R, D, "On se retrouve pour une nouvelle vidéo dégustation");
-		updateBDDMessage(M, D, "Ho ho bonjour à tous !");
-		updateBDDMessage(R, D2, "Je viens de faire une nouvelle vidéo");
-		System.out.println(getAllMessage(idM).toString());*/
-		
-		//addGroupBDD("g2");
-		//System.out.println(getAllGroup().toString());
-		int idUgo = adduserBDD("Ugo", "abc");
-		System.out.println(getPassword(idUgo));
+		System.out.println(getAllMessage(2).toString());
 	}
 	
 }
