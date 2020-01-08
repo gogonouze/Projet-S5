@@ -10,6 +10,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import java.awt.FlowLayout;
+import java.awt.Font;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -28,15 +30,27 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JTextPane;
 import javax.swing.ListModel;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Window.Type;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Gui {
 	
-	private JTextArea textArea_1;
+	private JTextArea displayArea;
 	private JFrame frame;
 	private User user;
+	
 	private JList<String> list;
 	private List<Integer> list_id = new ArrayList<>();
 	private DefaultListModel<String> model = new DefaultListModel<>();
+	
+	JTextArea messageArea;
+	
+	private final Action newDiscussion = new SwingAction();
+	private final Action Send = new SwingAction_1();
+	
 	
 	/**
 	 * Launch the application.
@@ -67,6 +81,9 @@ public class Gui {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setMinimumSize(new Dimension(500,300));
+		frame.setSize(new Dimension(750, 450));
+		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
@@ -77,9 +94,16 @@ public class Gui {
 		panel.add(panel_1, BorderLayout.SOUTH);
 		
 		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setAction(newDiscussion);
 		panel_1.add(btnNewButton);
 		
 		list = new JList();		
+		list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				displayContent();
+			}
+		});
 		list.setBackground(Color.WHITE);
 		list.setForeground(Color.BLACK);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -97,24 +121,30 @@ public class Gui {
 		panel_3.add(panel_4, BorderLayout.EAST);
 		
 		JButton btnNewButton_1 = new JButton("New button");
+		btnNewButton_1.setAction(Send);
 		panel_4.add(btnNewButton_1);
 		
-		JTextArea txtrPute = new JTextArea();
-		txtrPute.setRows(3);
-		txtrPute.setLineWrap(true);
-		txtrPute.setWrapStyleWord(true);
-		panel_3.add(txtrPute, BorderLayout.CENTER);
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		panel_3.add(scrollPane_1, BorderLayout.CENTER);
+		
+		messageArea = new JTextArea();
+		messageArea.setLineWrap(true);
+		messageArea.setWrapStyleWord(true);
+		messageArea.setRows(3);
+		scrollPane_1.setViewportView(messageArea);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		panel_2.add(scrollPane, BorderLayout.CENTER);
 		
-		textArea_1 = new JTextArea();
-		textArea_1.setEnabled(false);
-		textArea_1.setLineWrap(true);
-		textArea_1.setWrapStyleWord(true);
-		scrollPane.setViewportView(textArea_1);
+		displayArea = new JTextArea();
+		displayArea.setFont(new Font("Monospaced", Font.BOLD, 13));
+		displayArea.setEditable(false);
+		displayArea.setLineWrap(true);
+		displayArea.setWrapStyleWord(true);
+		scrollPane.setViewportView(displayArea);
 		
 		updateDiscussionsList();
 		list.setModel(model);
@@ -127,6 +157,56 @@ public class Gui {
 		}
 	}
 	
+	private void displayContent() {
+		int index = list.getSelectedIndex();
+		int idDiscussion = list_id.get(index);
+		Discussion discussion = user.getDiscussion(idDiscussion); 
+		
+		displayArea.setText("");
+		
+		for (Message m : discussion.getMessages()) {
+			String messageContent = m.getMessage();
+			String messageAuthor = "alo?";
+			
+			displayArea.append("______"+"\n");
+			displayArea.append("["+messageAuthor+"]"+" :"+"\n");
+			
+			displayArea.append(messageContent+"\n");
+			
+			displayArea.append("=-=-=-="+"\n");
+		
+			
+		}
+		
+		
+	}
 	
 	
+	
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "New Discussion");
+			putValue(SHORT_DESCRIPTION, "Get a new discussion");
+		}
+		public void actionPerformed(ActionEvent e) {
+			
+		}
+	}
+	
+	
+	private class SwingAction_1 extends AbstractAction {
+		public SwingAction_1() {
+			putValue(NAME, "Send");
+			putValue(SHORT_DESCRIPTION, "Send the message");
+		}
+		public void actionPerformed(ActionEvent e) {
+			int index = list.getSelectedIndex();
+			int idDiscussion = list_id.get(index);
+			Discussion discussion = user.getDiscussion(idDiscussion); 
+			
+			user.sendMessage(messageArea.getText(), discussion);
+			
+			messageArea.setText("");
+		}
+	}
 }

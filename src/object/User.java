@@ -173,6 +173,14 @@ public abstract class User implements Runnable{
 		return discussions;
 	}
 	
+	public Discussion getDiscussion(int i) {
+		for (Discussion d : this.discussions) {
+			if (d.getId() == i) 
+				return d;
+		}
+		return null;
+	}
+	
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
