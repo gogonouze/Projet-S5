@@ -647,6 +647,7 @@ public class Server implements Runnable{
 private LinkedList<String> getAllMessage(int id) {
 		
 		Connection con;
+		
 		LinkedList<String> l = new LinkedList<>();
 		
 		try {
