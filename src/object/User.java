@@ -19,6 +19,10 @@ public abstract class User {
 	NavigableSet<Group> groups = new TreeSet<Group>() ;
 	NavigableSet<Discussion> discussions= new TreeSet<Discussion>();
 	List<Group> allGroup = new ArrayList<Group>();
+	public List<Group> getAllGroup() {
+		return allGroup;
+	}
+
 	private static final int PORT = 8952;
 	Socket socket;
 	Timer t = new Timer();
