@@ -564,7 +564,7 @@ public class Server implements Runnable{
 		
 	}
 
-	// Les deux String doivent correspondre aux id. String user sert ï¿½  rien
+	// Les deux String doivent correspondre aux id. String user sert Ã  rien
 	private void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
@@ -610,7 +610,7 @@ public class Server implements Runnable{
 		}
 	}
 
-	private LinkedList<String> getAllMessage(int id) {
+private LinkedList<String> getAllMessage(int id) {
 		
 		Connection con;
 		LinkedList<String> l = new LinkedList<>();
@@ -795,7 +795,7 @@ public class Server implements Runnable{
 		}
 	}
 
-	// renvoie l'id de l'user ajoutï¿½
+	// renvoie l'id de l'user ajouté
 protected int adduserBDD(String user, String password) {
 		
 		Connection con;
@@ -828,7 +828,7 @@ protected int adduserBDD(String user, String password) {
 		return nbu;
 	}
 
-	// renvoie l'id du groupe ajoutï¿½
+	// renvoie l'id du groupe ajouté
 	protected int addGroupBDD(String name) {
 		
 		Connection con;
