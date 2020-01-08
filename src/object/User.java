@@ -379,7 +379,7 @@ public abstract class User {
 							}
 						}
 						if(!already_read) {
-							d.getMessages().add(new Message(contenu, Status.viewed,date, id_message, expediteur));
+							d.getMessages().add(new Message(contenu));
 							output.write("@ack@"+id_message);
 						}
 					}
@@ -404,34 +404,6 @@ public abstract class User {
 	
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
-	}
-	
-	private class Refresh extends TimerTask {
-
-		@Override
-		public void run() {
-			String command="@Refresh@"+name;
-					try {
-						output.write(command +"\n");
-						output.flush();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				
-			String reponse="";
-			while(!reponse.equals(".")) {
-				try {
-					reponse = input.readLine();
-					System.out.println(reponse);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-		}
-		
 	}
 	
 }
