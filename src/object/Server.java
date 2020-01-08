@@ -75,7 +75,7 @@ public class Server implements Runnable{
 		return (int) result;
 	}
 	
-public void run() {
+	public void run() {
 		try{
 			while(!server.isClosed()){
 				socket = server.accept();
@@ -347,6 +347,7 @@ public void run() {
 			e.printStackTrace();
 		}
 	}
+	
 	protected void create_user(String user, String password, Socket s) {
 		Integer id = adduserBDD(user);
 		try {
@@ -529,7 +530,7 @@ public void run() {
 		return u;
 	}
 	
-protected void refresh(String user) {
+	protected void refresh(String user) {
 		int id_user=atoi(user);
 		//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
@@ -555,17 +556,39 @@ protected void refresh(String user) {
 		
 		
 	}
+	
 	protected void disconnectUser(int id) {
 		communication.remove(id);
 		
 	}
+	
 	protected boolean matchpassword(int id_user, String password_test){
 		return password_test.equals(getPassword(id_user));
 	}
-	private Object getPassword(int id_user) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	private String getPassword(int id_user) {
+		
+		String password = "";
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Password FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id_user) {
+					password = rst.getString("Password");
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return password;
 	}
+	
 	// Les deux String doivent correspondre aux id. String user sert Ã  rien
 	private void updateStatus(String message) {
 		int idm = atoi(message);
@@ -798,7 +821,7 @@ protected void refresh(String user) {
 	}
 
 	// renvoie l'id de l'user ajouté
-	protected int adduserBDD(String user) {
+	protected int adduserBDD(String user, String password) {
 		
 		Connection con;
 		int nbu = 0;
@@ -821,7 +844,7 @@ protected void refresh(String user) {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			stmt.executeUpdate("INSERT INTO user (IdU, Name, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + 1 + "')");
+			stmt.executeUpdate("INSERT INTO user (IdU, Name, Password, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + password + "', '" + 1 +"')");
 			stmt.executeUpdate("UPDATE user SET nbU = " + nbu);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -928,9 +951,11 @@ protected void refresh(String user) {
 		
 		return lg;
 	}
+	
 	private boolean matchUserPassword(String user, String password, String id) {
 		return false;
 	}
+	
 	public static void main(String[] args){
 		Server c = new Server();
 		Thread t = new Thread(c);

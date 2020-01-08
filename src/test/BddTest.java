@@ -297,7 +297,7 @@ public class BddTest {
 		}
 	}
 	
-	private static int adduserBDD(String user) {
+	private static int adduserBDD(String user, String password) {
 		
 		Connection con;
 		int nbu = 0;
@@ -322,7 +322,7 @@ public class BddTest {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
 			Statement stmt = con.createStatement();
-			stmt.executeUpdate("INSERT INTO user (IdU, Name, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + 1 + "')");
+			stmt.executeUpdate("INSERT INTO user (IdU, Name, Password, IsConnected) VALUES ('" + nbu + "', '" + user + "', '" + password + "', '" + 1 +"')");
 			stmt.executeUpdate("UPDATE user SET nbU = " + nbu);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -588,6 +588,29 @@ public class BddTest {
 		return lg;
 	}
 	
+	private static String getPassword(int id_user) {
+		
+		String password = "";
+		Connection con;
+		
+		try {
+			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Password FROM bdd_projet_s5.user");
+			while (rst.next()) {
+				int idU = rst.getInt("IdU");
+				if (idU == id_user) {
+					password = rst.getString("Password");
+				}
+			}
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return password;
+	}
+	
 	public static void main(String[] args) {
 		
 		isconnected(1);
@@ -640,7 +663,9 @@ public class BddTest {
 		System.out.println(getAllMessage(idM).toString());*/
 		
 		//addGroupBDD("g2");
-		System.out.println(getAllGroup().toString());
+		//System.out.println(getAllGroup().toString());
+		int idUgo = adduserBDD("Ugo", "abc");
+		System.out.println(getPassword(idUgo));
 	}
 	
 }
