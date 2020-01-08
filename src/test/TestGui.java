@@ -25,6 +25,8 @@ public class TestGui {
 		
 		d.debug_addMessage(m);
 		
+		user.debug_addDiscussion(new Discussion("oh", group, new Message("")));
+		
 		user.debug_addDiscussion(d);
 		
 		d.debug_addMessage(new Message("fisbustier"));

@@ -35,7 +35,11 @@ public class Discussion implements Comparable<Discussion>{
 	public int compareTo(Discussion d) {
 		Message a = this.messages.last();
 		Message b = d.messages.last();
-		return a.compareTo(b);
+		int cmpM =  a.compareTo(b);
+		if (cmpM == 0) {
+			return getId()-d.getId(); 
+		}
+		return cmpM;
 	}
 
 	public TreeSet<Message> getMessages() {
