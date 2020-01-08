@@ -119,6 +119,7 @@ public class Gui {
 		
 		JPanel panel_4 = new JPanel();
 		panel_3.add(panel_4, BorderLayout.EAST);
+		panel_4.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		JButton btnNewButton_1 = new JButton("New button");
 		btnNewButton_1.setAction(Send);
@@ -166,9 +167,9 @@ public class Gui {
 		
 		for (Message m : discussion.getMessages()) {
 			String messageContent = m.getMessage();
+			System.out.println(messageContent);
 			String messageAuthor = "alo?";
 			
-			displayArea.append("______"+"\n");
 			displayArea.append("["+messageAuthor+"]"+" :"+"\n");
 			
 			displayArea.append(messageContent+"\n");
