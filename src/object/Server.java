@@ -224,7 +224,9 @@ public class Server implements Runnable{
 																}
 															}
 															message=temp;
-															addDiscussion(discussion,group);
+															int i =addDiscussion(discussion,group);
+															communication.get(atoi(user)).write(i+"\n");
+															communication.get(atoi(user)).flush();
 															updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
 														}
 														else {
