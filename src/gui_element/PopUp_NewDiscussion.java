@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.awt.Dialog.ModalityType;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
+import javax.swing.Action;
 
 public class PopUp_NewDiscussion extends JDialog {
 
@@ -39,6 +42,8 @@ public class PopUp_NewDiscussion extends JDialog {
 	Timer t = new Timer();
 	
 	private User user;
+	private final Action action = new SwingAction();
+	private final Action action_1 = new SwingAction_1();
 	
 	/**
 	 * Launch the application.
@@ -100,6 +105,7 @@ public class PopUp_NewDiscussion extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			
 		okButton = new JButton("Send");
+		okButton.setAction(action_1);
 		okButton.setEnabled(false);
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -107,6 +113,7 @@ public class PopUp_NewDiscussion extends JDialog {
 			
 			
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setAction(action);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 			
@@ -118,7 +125,7 @@ public class PopUp_NewDiscussion extends JDialog {
 		
 		@Override
 		public void run() {
-			if (!"".equals(textArea.getText())) {
+			if (!"".equals(textArea.getText()) && !comboBox.getSelectedItem().equals(null)) {
 				okButton.setEnabled(true);
 			} else {
 				okButton.setEnabled(false);
@@ -129,4 +136,26 @@ public class PopUp_NewDiscussion extends JDialog {
 	
 	
 	
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "Cancel");
+			putValue(SHORT_DESCRIPTION, "Abord the creation of a new discussion");
+		}
+		public void actionPerformed(ActionEvent e) {
+			dispose();
+		}
+	}
+	private class SwingAction_1 extends AbstractAction {
+		public SwingAction_1() {
+			putValue(NAME, "Send");
+			putValue(SHORT_DESCRIPTION, "Create a new discussion");
+		}
+		public void actionPerformed(ActionEvent e) {
+			String message = textArea.getText();
+			int index = comboBox.getSelectedIndex();
+			int id = list_id.get(index); 
+					
+			user.createConversation(message, message, user.getGroupFromAllGroup(id));
+		}
+	}
 }

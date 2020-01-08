@@ -38,6 +38,9 @@ import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JCheckBox;
 
 public class Gui {
@@ -87,11 +90,18 @@ public class Gui {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		frame = new JFrame();
 		frame.setMinimumSize(new Dimension(500,300));
 		frame.setSize(new Dimension(750, 450));
 		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
+                leave();
+            }
+        });
+		
 		
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.WEST);
@@ -177,6 +187,9 @@ public class Gui {
 		return null;
 	}
 	
+	private void leave() {
+		System.exit(0);
+	}
 	
 	private void displayContent() {
 		int index = list.getSelectedIndex();
