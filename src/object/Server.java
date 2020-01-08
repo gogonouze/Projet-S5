@@ -26,7 +26,7 @@ public class Server implements Runnable{
 	Socket socket;
 	ServerSocket server;
 	HashMap<User, BufferedWriter> communication= new HashMap<User, BufferedWriter>();
-	//crée le serveur
+	//crÃ©e le serveur
 	public Server(){
 		try {
 			server = new ServerSocket(PORT);
@@ -75,7 +75,7 @@ public class Server implements Runnable{
 		return (int) result;
 	}
 	
-	public void run() {
+public void run() {
 		try{
 			while(!server.isClosed()){
 				socket = server.accept();
@@ -93,8 +93,23 @@ public class Server implements Runnable{
 										System.out.println("Message recu : "+input);
 										//si cas de connection
 										if(input.startsWith("@Connection@")){
-											String user=input.replaceFirst("@Connection@","");
-											connect_user(user, socket);
+											input = input.replaceFirst("@Connection@","");;
+											String user="";
+											String temp="";
+											String password="";
+											String id ="";
+											for(char car : input.toCharArray()) {
+												if(car=='@') {
+													user=password;
+													password=temp;
+												}
+												else {
+													temp.concat(Character.toString(car));
+												}
+											}
+											id=temp;
+											
+											connect_user(user,password,id,socket);
 										}
 										else {
 											//tentative de rejoindre un groupe
@@ -113,7 +128,7 @@ public class Server implements Runnable{
 													}
 												}
 												group=temp;
-												adduserGBDD(user,group);
+												adduserGBDD(atoi(user),atoi(group));
 											}
 											else {
 												//quitte un groupe
@@ -132,10 +147,10 @@ public class Server implements Runnable{
 														}
 													}
 													group=temp;
-													deleteuserGBDD(user,group);
+													deleteuserGBDD(atoi(user),atoi(group));
 												}
 												else {
-													//message envoyé le serveur va retransmettre le message
+													//message envoyÃ© le serveur va retransmettre le message
 													if(input.startsWith("@Message@")){
 														input=input.replaceFirst("@Message@", "");
 														String user="";
@@ -153,9 +168,8 @@ public class Server implements Runnable{
 															}
 														}
 														message=temp;
-														updateBDDMessage(user,discussion,message);
-														retransmettreMessage(user,discussion,message);
-
+														updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
+														
 												}
 													else {
 														//Quitte une conversation
@@ -174,10 +188,10 @@ public class Server implements Runnable{
 																}
 															}
 															discussion=temp;
-															updateLeaveConv(user,discussion);
+															updateLeaveConv(atoi(user),atoi(discussion));
 
 													}
-														//Créer une conversation
+														//CrÃ©er une conversation
 														if(input.startsWith("@NeWMessage@")) {
 															input=input.replaceFirst("@NeWMessage@", "");
 															Group group= new Group();
@@ -196,12 +210,12 @@ public class Server implements Runnable{
 																	else {
 																		if(nbdot==1) {
 																			user=temp;
-																			group.group.add(getUser(user));
+																			group.group.add(getUser(atoi(user)));
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			group.group.add(getUser(temp));
+																			group.group.add(getUser(atoi(temp)));
 																			temp="";
 
 																		}
@@ -213,8 +227,7 @@ public class Server implements Runnable{
 															}
 															message=temp;
 															addDiscussion(discussion,group);
-															updateBDDMessage(user,discussion,message);
-															retransmettreMessage(user,discussion,message);
+															updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
 														}
 														else {
 															if(input.startsWith("@Rdiscussion@")) {
@@ -232,7 +245,7 @@ public class Server implements Runnable{
 																	}
 																}
 																discussion=temp;
-																giveDiscussion(getDiscussion(discussion),user);
+																giveDiscussion(getDiscussion(atoi(discussion)),user);
 																
 															}
 															else {
@@ -240,6 +253,37 @@ public class Server implements Runnable{
 																	input=input.replaceFirst("@Refresh@", "");
 																	refresh(input);
 																}
+																else {
+																	if(input.startsWith("@ack@")) {
+																		input=input.replaceFirst("@ack@", "");
+																		updateStatus(input);
+																	}
+																	else {
+																		if(input.startsWith("@createAccount@")) {
+																			input=input.replaceFirst("@createAccount@", "");
+																			String user="";
+																			String temp="";
+																			String password="";
+																			for(char car : input.toCharArray()) {
+																				if(car=='@') {
+																					user=temp;
+																				}
+																				else {
+																					temp.concat(Character.toString(car));
+																				}
+																			}
+																			password=temp;
+																			create_user(user,password,socket);
+																		}
+																		else {
+																			if(input.startsWith("@requestGroup@")) {
+																				input=input.replaceFirst("@requestGroup@", "");
+																				sendAllGroup(atoi(input));
+																			}
+																		}
+																	}
+																}
+																
 															}
 														}
 												}
@@ -264,6 +308,31 @@ public class Server implements Runnable{
 	}
 	
 	
+	protected void sendAllGroup(int id) {
+		List<Group> zbreh= getAllGroup();
+		if(zbreh!=null) {
+			for(Group arouf : zbreh) {
+				try {
+						communication.get(id).write(arouf.BetterToString()+"\n");
+						communication.get(id).flush();
+					}
+				 catch (IOException e) {
+				e.printStackTrace();
+			}
+				}
+			
+		}
+		try {
+			communication.get(id).write(".\n");
+			communication.get(id).flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	
 	protected void giveDiscussion(Discussion discussion, String user) {
 		try {
 			for (User u : communication.keySet()) {
@@ -278,79 +347,23 @@ public class Server implements Runnable{
 			e.printStackTrace();
 		}
 	}
-	
-	// J'ai ajoute des atoi et remplace getId par getPort. Du coup dans user y a l'id/port et les ports sont differents en theorie
-	protected void retransmettreMessage(String user, String discussion, String message) {
-		Socket socket;
-		PrintWriter output = null;
-		for( User client : getDiscussion(atoi(discussion)).getGroup() ){
-			if(client.getNameUser()!=user && isconnected(client.getPort())) {
-				try {
-					socket = new Socket(InetAddress.getLocalHost(),getUser(atoi(user)).getPort());//"192.168.43.95", PORT);
-					output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				output.println("@Message@"+user+"@"+discussion+"@"+message);
-				updateStatus(message,user);
-				
-			}
+	protected void create_user(String user, String password, Socket s) {
+		Integer id = adduserBDD(user);
+		try {
+			communication.put(id, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
-		
-	}
-	protected void retransmettreMessageV2(String user, String discussion, String message) {
-		Socket socket;
-		PrintWriter output = null;
-		for( User client : getDiscussion(discussion).getGroup().group ){
-			if(client.getNameUser()!=user && isconnected(client.getNameUser())) {
-				try {
-					for (User u : communication.keySet()) {
-						if(u.getNameUser().equals(user)) {
-							communication.get(u).write("@Message@"+user+"@"+message+"\n");
-							communication.get(u).flush();
-							updateStatus(message,user);
-						}
-					}
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}
+		try {
+			communication.get(id).write(id.toString()+"\n");
+			communication.get(id).flush();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 	}
 
-	private boolean isconnected(int id) {
-		
-		Connection con;
-		Boolean connected = false;
-		
-		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
-			Statement stmt = con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT IdU ," + "IsConnected FROM bdd_projet_s5.user");
-			
-			while (rst.next()) {
-				int idU = rst.getInt("IdU");
-				if (id == idU) {
-					if (rst.getInt("IsConnected") == 1){
-						connected = true;
-					}
-					else {
-						connected = false;
-					}
-				}
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return connected;
-	}
-	
 	// Permet de recuperer un message identifie avec son id dans la base de donnees
 	private Message getMessage(int id) {
 		
@@ -516,46 +529,34 @@ public class Server implements Runnable{
 		return u;
 	}
 	
-	protected void refresh(String user) {
-		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "@Envoyeur@Discussion@contenu@Date" 
+protected void refresh(String user) {
+		int id_user=atoi(user);
+		//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
 		LinkedList<String> unviewedmessage=getAllUnviewedMessage(user);
 		if(unviewedmessage!=null) {
 			for(String message : unviewedmessage) {
 				try {
-					for (User u : communication.keySet()) {
-						if(u.getNameUser().equals(user)) {
-							communication.get(u).write("@Message@"+user+"@"+message+"\n");
-							communication.get(u).flush();
-							updateStatus(message,user);
-						}
+						communication.get(id_user).write(message+"\n");
+						communication.get(id_user).flush();
 					}
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+				 catch (IOException e) {
+				e.printStackTrace();
 			}
-				
+				}
 			
 		}
 		try {
-			for (User u : communication.keySet()) {
-				if(u.getNameUser().equals(user)) {
-					communication.get(u).write(".\n");
-					communication.get(u).flush();
-				}
-			}
+			communication.get(id_user).write(".\n");
+			communication.get(id_user).flush();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
 	}
 
-	// Les deux String doivent correspondre aux id. String user sert à rien
+	// Les deux String doivent correspondre aux id. String user sert Ã  rien
 	private void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
@@ -786,7 +787,7 @@ public class Server implements Runnable{
 		}
 	}
 
-	// renvoie l'id de l'user ajout�
+	// renvoie l'id de l'user ajouté
 	protected int adduserBDD(String user) {
 		
 		Connection con;
@@ -819,7 +820,7 @@ public class Server implements Runnable{
 		return nbu;
 	}
 
-	// renvoie l'id du groupe ajout�
+	// renvoie l'id du groupe ajouté
 	protected int addGroupBDD(String name) {
 		
 		Connection con;
@@ -852,25 +853,30 @@ public class Server implements Runnable{
 		return nbg;
 	}
 	
-	protected void connect_user(String user, Socket s) throws IOException {
-		boolean is_present =false;
-		for (User u : communication.keySet()) {
-			is_present=u.getNameUser()==user;
-		}
-		if(!is_present) {
-			communication.put(new Client(user), new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
-		}
-		try {
-			for (User u : communication.keySet()) {
-				if(u.getNameUser().equals(user)) {
-					communication.get(u).write("Ack"+"\n");
-					communication.get(u).flush();
+	protected void connect_user(String user, String password, String id, Socket s) throws IOException {
+		Integer id_user=atoi(user);
+		if(matchUserPassword(user,password,id)) {
+			boolean is_present =false;
+				is_present=communication.containsKey(id_user);
+				if (is_present) {
+					communication.replace(id_user, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
+					
 				}
-			}
+				else {
+					communication.put(id_user, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
+				}
+			try {
+					communication.get(id_user).write(id_user.toString()+"\n");
+					communication.get(id_user).flush();
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			BufferedWriter temp = new BufferedWriter((new OutputStreamWriter(s.getOutputStream())));
+			temp.write("WrongPassword\n");
+			temp.flush();
 		}
 	}
 
@@ -912,7 +918,9 @@ public class Server implements Runnable{
 		
 		return lg;
 	}
-	
+	private boolean matchUserPassword(String user, String password, String id) {
+		return false;
+	}
 	public static void main(String[] args){
 		Server c = new Server();
 		Thread t = new Thread(c);
