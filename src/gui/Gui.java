@@ -365,6 +365,7 @@ public class Gui {
 		}
 		public void actionPerformed(ActionEvent e) {
 			PopUp_JoinGroup.launch(user);
+			updateDiscussionsList();
 		}
 	}
 	private class SwingAction_5 extends AbstractAction {
