@@ -4,6 +4,7 @@ import object.User;
 import object.Group;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.ComboBoxModel;
@@ -66,6 +67,9 @@ public class PopUp_NewDiscussion extends JDialog {
 		setTitle("New discussion");
 		this.user = user;
 		
+		this.setBackground(new Color(34,34,40));
+		this.getContentPane().setBackground(new Color(34,34,40));
+		
 		setAlwaysOnTop(true);
 		setType(Type.POPUP);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
@@ -80,6 +84,7 @@ public class PopUp_NewDiscussion extends JDialog {
 		contentPanel.add(panel, BorderLayout.NORTH);
 			
 		JLabel lblPickAGroup = new JLabel("Pick a group");
+		lblPickAGroup.setForeground(new Color(255, 255, 255));
 		lblPickAGroup.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblPickAGroup);
 			

@@ -116,6 +116,7 @@ public class Gui {
             }
         });
 		
+		frame.setBackground(new Color(34,34,40));
 		
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.WEST);
