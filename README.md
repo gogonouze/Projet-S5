@@ -18,11 +18,11 @@ Projet L3S5 Informatique
 
 
 
-## Démarrage
+### Démarrage
 
 ...
 
-## Fabriqué avec
+### Fabriqué avec
 
 * [Eclipse](https://www.eclipse.org) - IDE java
 
