@@ -521,29 +521,5 @@ public abstract class User {
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
-	public static void main(String[] args){
-		User me = new Client("Romain");
-		me.create_account(me.getNameUser(), "MyMdP");
-		me.disconnect();
-		me.connect(me.getNameUser(), "MyMdP");
-		User ugo = new Client("Ugo");
-		User pierre = new Client("Pierre");
-		ugo.create_account(ugo.getNameUser(), "Grincant");
-		pierre.create_account(pierre.getNameUser(), "vache");
-		me.createGroup("le groupe de projet");
-		ugo.requestGroup();
-		System.out.println(ugo.getAllGroup().toString());
-		pierre.requestGroup();
-		System.out.println(pierre.getAllGroup().toString());
-		ugo.joinGroup(ugo.allGroup.get(0));
-		pierre.joinGroup(pierre.allGroup.get(0));
 		
-		pierre.leaveGroup(pierre.groups.first());
-		pierre.createConversation("yo les boys", "L3Info", pierre.allGroup.get(0));
-		ugo.disconnect();
-		pierre.disconnect();
-		me.disconnect();
-		System.out.println("test");
-	}
-	
 }
