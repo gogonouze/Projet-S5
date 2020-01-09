@@ -128,19 +128,27 @@ public class Gui {
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setForeground(new Color(255, 255, 255));
+		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton.setAction(newDiscussion);
 		panel_1.add(btnNewButton);
 		
 		JButton refreshButton = new JButton("New button");
+		refreshButton.setForeground(new Color(255, 255, 255));
+		refreshButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		refreshButton.setAction(action);
 		refreshButton.setBackground(buttonColor);
 		panel_1.add(refreshButton);
 		
 		JButton btnNewButton_1 = new JButton("New button");
+		btnNewButton_1.setForeground(new Color(255, 255, 255));
+		btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton_1.setAction(action_1);
 		panel_1.add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("New button");
+		btnNewButton_2.setForeground(new Color(255, 255, 255));
+		btnNewButton_2.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnNewButton_2.setAction(action_2);
 		panel_1.add(btnNewButton_2);
 		
@@ -169,11 +177,15 @@ public class Gui {
 		panel_4.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		sendButton = new JButton("New button");
+		sendButton.setForeground(new Color(255, 255, 255));
+		sendButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		sendButton.setAction(Send);
 		sendButton.setBackground(buttonColor);
 		panel_4.add(sendButton);
 		
 		JButton btnNewButton_3 = new JButton("New button");
+		btnNewButton_3.setFont(new Font("Tahoma", Font.BOLD, 10));
+		btnNewButton_3.setForeground(new Color(255, 255, 255));
 		btnNewButton_3.setAction(action_3);
 		panel_4.add(btnNewButton_3);
 		
