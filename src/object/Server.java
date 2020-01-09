@@ -208,12 +208,12 @@ public class Server implements Runnable{
 																	else {
 																		if(nbdot==1) {
 																			
-																			user=temp;
+																			group=getGroupBDD(atoi(temp));
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			group=getGroupBDD(atoi(temp));
+																			user=temp;
 																			temp="";
 
 																		}
@@ -231,6 +231,7 @@ public class Server implements Runnable{
 															
 															communication.get(atoi(user)).write(i+"@"+j+"\n");
 															communication.get(atoi(user)).flush();
+															System.out.println("Sortie de communication");
 														}
 														else {
 															if(input.startsWith("@Rdiscussion@")) {

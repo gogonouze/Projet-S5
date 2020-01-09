@@ -366,6 +366,7 @@ public abstract class User {
 		String reponse="";
 		try {
 			reponse = input.readLine();
+			System.out.println("affiche reponse");
 			 idConv=0;
 			int idMessage = 0;
 			String temp ="";
