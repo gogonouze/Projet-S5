@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import gui.Gui;
+import gui.Launcher;
 import object.User;
 
 public class PopUp_NewAccount extends JDialog {
@@ -52,7 +53,6 @@ public class PopUp_NewAccount extends JDialog {
 	public PopUp_NewAccount(User user) {
 		this.user = user;
 		
-		setAlwaysOnTop(true);
 		setType(Type.POPUP);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -118,7 +118,9 @@ public class PopUp_NewAccount extends JDialog {
 			putValue(SHORT_DESCRIPTION, "Cancel");
 		}
 		public void actionPerformed(ActionEvent e) {
+			Launcher.launch(user);
 			dispose();
+			
 		}
 	}
 	private class SwingAction_1 extends AbstractAction {
@@ -133,6 +135,8 @@ public class PopUp_NewAccount extends JDialog {
 			user.create_account(userName, password);
 			
 			Gui.launch(user);
+			dispose();
+			
 			
 		}
 	}

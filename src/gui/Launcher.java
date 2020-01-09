@@ -158,6 +158,7 @@ public class Launcher {
 		public void actionPerformed(ActionEvent e) {
 			PopUp_NewAccount.launch(user);
 			frame.dispose();
+			
 		}
 	}
 }
