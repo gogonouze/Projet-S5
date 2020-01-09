@@ -906,9 +906,12 @@ private LinkedList<String> getAllMessage(int id) {
 	}
 	
 	protected void connect_user(String user, String password, String id, Socket s) throws IOException {
-		Integer id_user=atoi(id);
-		if(matchpassword(id_user,password)) {
-			boolean is_present =false;
+		List<Integer> id_users=getUser(user);
+		Integer id_user=0;
+		for(Integer i : id_users) {
+			if(matchpassword(i,password)) {
+				id_user=i;
+				boolean is_present =false;
 				is_present=communication.containsKey(id_user);
 				if (is_present) {
 					communication.replace(id_user, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
@@ -925,14 +928,36 @@ private LinkedList<String> getAllMessage(int id) {
 				e.printStackTrace();
 			}
 		}
-		else {
+	}
+	if(id_user==0) {
 			BufferedWriter temp = new BufferedWriter((new OutputStreamWriter(s.getOutputStream())));
 			temp.write("WrongPassword\n");
 			temp.flush();
 		}
 	}
-
-
+	 private List<Integer> getUser(String name) {
+	        
+	        List<Integer> lu = new ArrayList<>();
+	        Connection con;
+	        
+	        try {
+	            con = DriverManager.getConnection("jdbc:mysql://localhost/bdd_projet_s5", "root", "");
+	            Statement stmt = con.createStatement();
+	            ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Name FROM bdd_projet_s5.user");
+	            while (rst.next()) {
+	                String n = rst.getString("Name");
+	                if (n == name) {
+	                    int idU = rst.getInt("IdU");
+	                    lu.add(idU);
+	                }
+	            }
+	            
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        
+	        return lu;
+	    }
 	public List<Group> getAllGroup(){
 		
 		List<Group> lg = new ArrayList<>();
