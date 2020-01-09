@@ -13,16 +13,17 @@ Projet L3S5 Informatique
 ### Pré-requis
 
 * [Java](https://www.java.com/fr/) - à jours
+* [WampServer](http://www.wampserver.com) - à jours
 
 ### Installation
 
 * Pour créer la base de données :
-    - Allumer wamp
-    - Ouvrir phpMyAdmin
-    - Utilisateur : root | Mot de passe : (rien)
-    - Créer une nouvelle base de données qui s'appelle bdd_projet_s5
-    - Dans cette base de données importer le fichier bdd_projet_s5.sql qui se trouve à la racine du projet
-    - Dans eclipse ajouter le plug-in mysql-connector-java
+    - Allumer **[wamp]**(http://www.wampserver.com)
+    - Ouvrir **phpMyAdmin**
+    - Utilisateur : **root** | Mot de passe : *(rien)*
+    - Créer une nouvelle base de données qui s'appelle **bdd_projet_s5**
+    - Dans cette base de données importer le fichier **bdd_projet_s5.sql** qui se trouve à la **racine du projet**
+    - Dans **eclipse** ajouter le **plug-in mysql-connector-java**
 
 ### Démarrage
 
