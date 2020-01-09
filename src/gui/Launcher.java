@@ -15,6 +15,8 @@ import javax.swing.JTextField;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
+
+import gui.gui_element.PopUp_NewAccount;
 import net.miginfocom.swing.MigLayout;
 import object.User;
 
@@ -30,16 +32,19 @@ import java.awt.GridLayout;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
+import java.awt.event.ActionListener;
+import javax.swing.JPasswordField;
 
 public class Launcher {
 
 	private JFrame frame;
-	private JTextField passwordText;
 	private JTextField loginText;
 	private final Action action = new SwingAction();
 	private JLabel ErrorLabel;
 	
 	private User user;
+	private final Action action_1 = new SwingAction_1();
+	private JPasswordField passwordText;
 	
 	/**
 	 * Launch the application.
@@ -88,6 +93,11 @@ public class Launcher {
 		panel.add(panel_2, BorderLayout.CENTER);
 		
 		JButton createAccountButton = new JButton("New button");
+		createAccountButton.setAction(action_1);
+		createAccountButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		panel_2.add(createAccountButton);
 		
 		JButton connectionButton = new JButton("New button");
@@ -114,9 +124,9 @@ public class Launcher {
 		JLabel lblNewLabel = new JLabel("Password");
 		panel_5.add(lblNewLabel);
 		
-		passwordText = new JTextField();
-		panel_5.add(passwordText);
+		passwordText = new JPasswordField();
 		passwordText.setColumns(10);
+		panel_5.add(passwordText);
 	
 
 		
@@ -138,6 +148,16 @@ public class Launcher {
 				ErrorLabel.setText("Login or Password incorrect");
 				ErrorLabel.setForeground(Color.red);
 			}
+		}
+	}
+	private class SwingAction_1 extends AbstractAction {
+		public SwingAction_1() {
+			putValue(NAME, "Create new account");
+			putValue(SHORT_DESCRIPTION, "Create a new account");
+		}
+		public void actionPerformed(ActionEvent e) {
+			PopUp_NewAccount.launch(user);
+			frame.dispose();
 		}
 	}
 }

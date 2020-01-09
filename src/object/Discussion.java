@@ -41,8 +41,8 @@ public class Discussion implements Comparable<Discussion>{
 	}
 	
 	public int compareTo(Discussion d) {
-		Message a = this.messages.last();
-		Message b = d.messages.last();
+		Message a = this.messages.first();
+		Message b = d.messages.first();
 		int cmpM =  a.compareTo(b);
 		if (cmpM == 0) {
 			return getId()-d.getId(); 
