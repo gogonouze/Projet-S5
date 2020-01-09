@@ -22,16 +22,7 @@ public class Server implements Runnable{
 	private static final int PORT = 8952;
 	Socket socket;
 	ServerSocket server;
-	HashMap<Integer, BufferedWriter> communication= new HashMap<Integer, BufferedWriter>();
-	HashMap<Integer, Group> groupes = new HashMap<Integer, Group>();
-	HashMap<Integer, Discussion> discussions = new HashMap<Integer, Discussion>();
-	HashMap<Integer,User> utilisateurs = new HashMap<Integer, User>();
-	HashMap<Integer,Message> messages = new HashMap<Integer, Message>();
-	HashMap<Integer,String> mdp = new HashMap<Integer, String>();
-	int id_stock_user =1;
-	int id_stock_group=1;
-	int id_stock_discussion = 1;
-	int id_stock_messages = 1;
+	HashMap<Integer, BufferedWriter> communication= new HashMap<Integer, BufferedWriter>(); 
 	//crée le serveur
 	public Server(){
 		try {
@@ -134,7 +125,7 @@ public class Server implements Runnable{
 													}
 												}
 												group=temp;
-												debugadduserGBDD(atoi(user),atoi(group));
+												adduserGBDD(atoi(user),atoi(group));
 											}
 											else {
 												//quitte un groupe
@@ -153,7 +144,7 @@ public class Server implements Runnable{
 														}
 													}
 													group=temp;
-													debugdeleteuserGBDD(atoi(user),atoi(group));
+													deleteuserGBDD(atoi(user),atoi(group));
 												}
 												else {
 													//message envoyé le serveur va retransmettre le message
@@ -174,7 +165,7 @@ public class Server implements Runnable{
 															}
 														}
 														message=temp;
-														debugupdateBDDMessage(debuggetUser(atoi(user)),debuggetDiscussion(atoi(discussion)),message);
+														updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
 														
 												}
 													else {
@@ -194,7 +185,7 @@ public class Server implements Runnable{
 																}
 															}
 															discussion=temp;
-															debugupdateLeaveConv(atoi(user),atoi(discussion));
+															updateLeaveConv(atoi(user),atoi(discussion));
 
 													}
 														//Créer une conversation
@@ -215,13 +206,12 @@ public class Server implements Runnable{
 																	}
 																	else {
 																		if(nbdot==1) {
-																			user=temp;
-																			group.group.add(debuggetUser(atoi(user)));
+																			group=getGroupBDD(atoi(temp));
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			group.group.add(debuggetUser(atoi(temp)));
+																			user=temp;
 																			temp="";
 
 																		}
@@ -230,12 +220,15 @@ public class Server implements Runnable{
 																else {
 																	temp=temp+String.valueOf(car);
 																}
+																
 															}
 															message=temp;
-															int i =debugaddDiscussion(discussion,group);
+															group.getGroup().add(getUser(atoi(user)));
+															int i =addDiscussion(discussion,group);
+															
 															communication.get(atoi(user)).write(i+"\n");
 															communication.get(atoi(user)).flush();
-															debugupdateBDDMessage(debuggetUser(atoi(user)),debuggetDiscussion(atoi(discussion)),message);
+															updateBDDMessage(getUser(atoi(user)),getDiscussion(i),message);
 														}
 														else {
 															if(input.startsWith("@Rdiscussion@")) {
@@ -253,7 +246,7 @@ public class Server implements Runnable{
 																	}
 																}
 																discussion=temp;
-																giveDiscussion(debuggetDiscussion(atoi(discussion)),user);
+																giveDiscussion(getDiscussion(atoi(discussion)),user);
 																
 															}
 															else {
@@ -344,47 +337,18 @@ public class Server implements Runnable{
 		}catch (IOException e){e.printStackTrace();}
 	}
 	
-	
-	private User debuggetUser(int atoi) {
-		return utilisateurs.get(atoi);
-	}
 
-	private void debugupdateBDDMessage(User user, Discussion discussion, String message) {
-		System.out.println(message);
-	}
-
-	protected Discussion debuggetDiscussion(int atoi) {
-		return discussions.get(atoi);
-	}
-
-
-	protected int debugaddDiscussion(String discussion, Group group) {
-		discussions.put(id_stock_discussion, new Discussion(discussion,group,new Message("Grincant"),id_stock_discussion));
-		id_stock_discussion++;
-		return id_stock_discussion-1;
-	}
-
-
-	protected void debugupdateLeaveConv(int atoi, int atoi2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	protected void debugdeleteuserGBDD(int atoi, int atoi2) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 	protected void disconnectUser(int id) {
-		communication.remove(id);
+		System.out.println(communication.toString());
 		
 	}
 	
 	private void addGroup(String nameGroup, int id_user) {
-		int id_group = debugaddGroupBDD(nameGroup);
-		debugadduserGBDD(id_user, id_group);
+		int id_group = addGroupBDD(nameGroup);
+		System.out.print(communication.get(id_user).toString());
+		adduserGBDD(id_user, id_group);
 		try {
 			communication.get(id_user).write(id_group+"\n");
 			communication.get(id_user).flush();
@@ -394,23 +358,10 @@ public class Server implements Runnable{
 		
 	}
 
-	private void debugadduserGBDD(int id_user, int id_group) {
-		List<User> t = groupes.get(id_group).getGroup();
-		t.add(utilisateurs.get(id_user));
-		groupes.replace(id_group, new Group( groupes.get(id_group).getName(),  groupes.get(id_group).getiD_group(),t));
-		
-	}
-
-
-	private int debugaddGroupBDD(String nameGroup) {
-		groupes.put(id_stock_group, new Group(nameGroup, id_stock_group, new ArrayList<User> ()));
-		id_stock_group++;
-		return id_stock_group-1;
-	}
 
 
 	protected void sendAllGroup(int id) {
-		List<Group> zbreh= debuggetAllGroup();
+		List<Group> zbreh= getAllGroup();
 		if(zbreh!=null) {
 			for(Group arouf : zbreh) {
 				try {
@@ -433,18 +384,8 @@ public class Server implements Runnable{
 		
 	}
 
-
-	private List<Group> debuggetAllGroup() {
-		ArrayList<Group> retval = new ArrayList<Group>();
-		for(Integer i : groupes.keySet()) {
-			retval.add(groupes.get(i));
-		}
-		return retval;
-	}
-
-
 	protected void create_user(String user, String password, Socket s) {
-		Integer id = debugadduserBDD(user, password);
+		Integer id = adduserBDD(user, password);
 		try {
 			communication.put(id, new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
 		} catch (IOException e1) {
@@ -458,14 +399,6 @@ public class Server implements Runnable{
 			e.printStackTrace();
 		}
 		
-	}
-
-
-	private Integer debugadduserBDD(String user, String password) {
-		utilisateurs.put(id_stock_user, new Client(user,id_stock_user));
-		mdp.put(id_stock_user,password);
-		id_stock_user++;
-		return id_stock_user-1;
 	}
 
 
@@ -648,7 +581,7 @@ public class Server implements Runnable{
 	protected void refresh(String user) {
 		int id_user=atoi(user);
 		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
-		LinkedList<String> unviewedmessage=debuggetAllMessage(id_user);
+		LinkedList<String> unviewedmessage=getAllMessage(id_user);
 		if(!unviewedmessage.isEmpty()) {
 			for(String message : unviewedmessage) {
 				try {
@@ -670,11 +603,6 @@ public class Server implements Runnable{
 		}
 		
 		
-	}
-
-	private LinkedList<String> debuggetAllMessage(int id_user) {
-		LinkedList<String> retval = new LinkedList<String>();
-		return retval;
 	}
 
 
@@ -912,7 +840,7 @@ private LinkedList<String> getAllMessage(int id) {
 	}
 
 	// renvoie l'id de l'user ajout�
-protected int adduserBDD(String user, String password) {
+	protected  int adduserBDD(String user, String password) {
 		
 		Connection con;
 		int nbu = 0;
@@ -979,7 +907,7 @@ protected int adduserBDD(String user, String password) {
 	
 	protected void connect_user(String user, String password, String id, Socket s) throws IOException {
 		Integer id_user=atoi(id);
-		if(debugmatchpassword(id_user,password)) {
+		if(matchpassword(id_user,password)) {
 			boolean is_present =false;
 				is_present=communication.containsKey(id_user);
 				if (is_present) {
@@ -1002,9 +930,6 @@ protected int adduserBDD(String user, String password) {
 			temp.write("WrongPassword\n");
 			temp.flush();
 		}
-	}
-	private boolean debugmatchpassword(Integer id_user, String password) {
-		return mdp.get(id_user).equals(password);
 	}
 
 
