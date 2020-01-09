@@ -16,7 +16,7 @@ Projet L3S5 Informatique
 
 ### Installation
 
-
+...
 
 ### Démarrage
 
@@ -29,5 +29,5 @@ Projet L3S5 Informatique
 
 ### Auteurs
 * **EB-LEVADOUX Ugo** - *Initial work* - [gogonouze](https://github.com/gogonouze)
-* **MEUNIER Romain** - *Initial work*
-* **RIGAL Pierre** - *Initial work*
+* **MEUNIER Romain** - *Initial work* - [UnkneesDwark](https://github.com/UnkneesDwark)
+* **RIGAL Pierre** - *Initial work* - [Nibellung](https://github.com/Nibellung)
