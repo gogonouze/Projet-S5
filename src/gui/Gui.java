@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 
+import gui.gui_element.PopUp_JoinGroup;
 import gui.gui_element.PopUp_NewDiscussion;
 import gui.gui_element.PopUp_NewGroup;
 import object.Discussion;
@@ -68,6 +69,7 @@ public class Gui {
 	private final Action Send = new SwingAction_1();
 	private final Action action = new SwingAction_2();
 	private final Action action_1 = new SwingAction_3();
+	private final Action action_2 = new SwingAction_4();
 	
 	
 	/**
@@ -130,6 +132,10 @@ public class Gui {
 		JButton btnNewButton_1 = new JButton("New button");
 		btnNewButton_1.setAction(action_1);
 		panel_1.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("New button");
+		btnNewButton_2.setAction(action_2);
+		panel_1.add(btnNewButton_2);
 		
 		list = new JList();		
 		list.addMouseListener(new MouseAdapter() {
@@ -305,6 +311,15 @@ public class Gui {
 		}
 		public void actionPerformed(ActionEvent e) {
 			PopUp_NewGroup.launch(user);
+		}
+	}
+	private class SwingAction_4 extends AbstractAction {
+		public SwingAction_4() {
+			putValue(NAME, "Join group");
+			putValue(SHORT_DESCRIPTION, "Join group");
+		}
+		public void actionPerformed(ActionEvent e) {
+			PopUp_JoinGroup.launch(user);
 		}
 	}
 }
