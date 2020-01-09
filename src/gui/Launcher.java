@@ -33,7 +33,7 @@ import javax.swing.JPasswordField;
 
 public class Launcher {
 
-	private JFrame frame;
+	private JFrame frmLauncher;
 	private JTextField loginText;
 	private final Action action = new SwingAction();
 	private JLabel ErrorLabel;
@@ -52,7 +52,7 @@ public class Launcher {
 			public void run() {
 				try {
 					Launcher window = new Launcher(user);
-					window.frame.setVisible(true);
+					window.frmLauncher.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -72,17 +72,18 @@ public class Launcher {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setBounds(100, 100, 298, 184);
-		frame.setBackground(new Color(34,34,40));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmLauncher = new JFrame();
+		frmLauncher.setTitle("Launcher");
+		frmLauncher.setResizable(false);
+		frmLauncher.setBounds(100, 100, 298, 184);
+		frmLauncher.setBackground(new Color(34,34,40));
+		frmLauncher.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		frame.getContentPane().setBackground(new Color(34,34,40));
+		frmLauncher.getContentPane().setBackground(new Color(34,34,40));
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(34,34,40));
-		frame.getContentPane().add(panel, BorderLayout.SOUTH);
+		frmLauncher.getContentPane().add(panel, BorderLayout.SOUTH);
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -116,7 +117,7 @@ public class Launcher {
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(new Color(34,34,40));
-		frame.getContentPane().add(panel_3, BorderLayout.CENTER);
+		frmLauncher.getContentPane().add(panel_3, BorderLayout.CENTER);
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
 		
 		JPanel panel_4 = new JPanel();
@@ -168,7 +169,7 @@ public class Launcher {
 			
 			if(user.connect(login,password)) {
 				Gui.launch(user);
-				frame.dispose();
+				frmLauncher.dispose();
 			} else {
 				ErrorLabel.setText("Login or Password incorrect");
 				ErrorLabel.setForeground(Color.red);
@@ -182,7 +183,7 @@ public class Launcher {
 		}
 		public void actionPerformed(ActionEvent e) {
 			PopUp_NewAccount.launch(user);
-			frame.dispose();
+			frmLauncher.dispose();
 			
 		}
 	}
