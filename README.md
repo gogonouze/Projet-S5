@@ -9,6 +9,8 @@ Projet L3S5 Informatique
 * Communication client-opérateur via serveur
 * ~~Clôture du ticket~~
 * Conservation de l'historique de la communication utilisateur/serveur
+* Interface pour les utilisateurs
+* Création de compte
 
 ### Pré-requis
 
