@@ -3,6 +3,8 @@ package gui.gui_element;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,7 +25,6 @@ import object.User;
 public class PopUp_NewAccount extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JDialog dialog;
 	private JTextField loginText;
 	private final Action action = new SwingAction();
 	private JLabel ErrorLabel;
@@ -49,11 +50,20 @@ public class PopUp_NewAccount extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_NewAccount(User user) {
-		dialog = new JDialog();
-		dialog.setResizable(false);
+		this.user = user;
+		
+		setAlwaysOnTop(true);
+		setType(Type.POPUP);
+		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
-		dialog.getContentPane().add(panel, BorderLayout.SOUTH);
+		contentPanel.add(panel, BorderLayout.SOUTH);
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -78,7 +88,7 @@ public class PopUp_NewAccount extends JDialog {
 		panel_2.add(cancelButton);
 		
 		JPanel panel_3 = new JPanel();
-		dialog.getContentPane().add(panel_3, BorderLayout.CENTER);
+		contentPanel.add(panel_3, BorderLayout.CENTER);
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
 		
 		JPanel panel_4 = new JPanel();
