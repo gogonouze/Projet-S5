@@ -57,7 +57,7 @@ public class Group implements Comparable<Group>{
 		return retval;
 	}
 	public String BetterToString () {
-		String retval=name+"@"+this.toStringBis();
+		String retval=name+"@"+iD_group+"@"+this.toStringBis();
 		return retval;
 	}
 	public Group() {

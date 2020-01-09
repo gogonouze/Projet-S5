@@ -305,6 +305,25 @@ public class Server implements Runnable{
 																						id_user=atoi(temp);
 																						addGroup(nameGroup,id_user);
 																					}
+																					else {
+																						if(input.startsWith("@RName@")) {
+																							input=input.replaceFirst("@RName@", "");
+																							int id_user=0;
+																							int idToKnow=0;
+																							String temp="";
+																							for(char car : input.toCharArray()) {
+																								if(car=='@') {
+																									id_user=atoi(temp);
+																									temp="";
+																								}
+																								else {
+																									temp=temp+String.valueOf(car);
+																								}
+																							}
+																							idToKnow=atoi(temp);
+																							sendUser(id_user,idToKnow);
+																						}
+																					}
 																				}
 																			}
 																		}
@@ -340,6 +359,17 @@ public class Server implements Runnable{
 
 
 
+	protected void sendUser(int id_user, int idToKnow) {
+		try {
+			communication.get(id_user).write(getUser(idToKnow).getNameUser()+"\n");
+			communication.get(id_user).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
 	protected void disconnectUser(int id) {
 		System.out.println(communication.toString());
 		
@@ -347,7 +377,6 @@ public class Server implements Runnable{
 	
 	private void addGroup(String nameGroup, int id_user) {
 		int id_group = addGroupBDD(nameGroup);
-		System.out.print(communication.get(id_user).toString());
 		adduserGBDD(id_user, id_group);
 		try {
 			communication.get(id_user).write(id_group+"\n");
@@ -364,6 +393,7 @@ public class Server implements Runnable{
 		List<Group> zbreh= getAllGroup();
 		if(zbreh!=null) {
 			for(Group arouf : zbreh) {
+				System.out.println(arouf.BetterToString());
 				try {
 						communication.get(id).write(arouf.BetterToString()+"\n");
 						communication.get(id).flush();
@@ -405,7 +435,8 @@ public class Server implements Runnable{
 	protected void giveDiscussion(Discussion discussion, String user) {
 		int id_user=atoi(user);
 		try {
-				communication.get(id_user).write(discussion.toString()+"\n");
+				System.out.println(discussion.toStringBis());
+				communication.get(id_user).write(discussion.toStringBis()+"\n");
 				communication.get(id_user).flush();
 			
 		} catch (IOException e) {
@@ -582,6 +613,7 @@ public class Server implements Runnable{
 		int id_user=atoi(user);
 		//renvoie tout les message non lus renvoy√©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
 		LinkedList<String> unviewedmessage=getAllMessage(id_user);
+		System.out.println(unviewedmessage.toString());
 		if(!unviewedmessage.isEmpty()) {
 			for(String message : unviewedmessage) {
 				try {
@@ -604,10 +636,11 @@ public class Server implements Runnable{
 		
 		
 	}
-
-
-	// Les deux String doivent correspondre aux id. String user sert √  rien
 	private void updateStatus(String message) {
+		
+	}
+	// Les deux String doivent correspondre aux id. String user sert √  rien
+	/*private void updateStatus(String message) {
 		int idm = atoi(message);
 		int idd = 0;
 		Message m = getMessage(idm);
@@ -650,7 +683,7 @@ public class Server implements Runnable{
 				e.printStackTrace();
 			}
 		}
-	}
+	}*/
 
 private LinkedList<String> getAllMessage(int id) {
 		

@@ -2,6 +2,7 @@ package object;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NavigableSet;
@@ -37,7 +38,6 @@ public abstract class User {
 
 	private static final int PORT = 8952;
 	Socket socket;
-	Timer t;
 	public User(String name) {
 		this.name = name;
 	
@@ -99,14 +99,13 @@ public abstract class User {
 			return (int) result;
 		}
 
-	protected void request_discussion(String discussion) throws IOException {
+	protected Discussion request_discussion(int discussion) throws IOException {
 		output.write("@Rdiscussion@"+id+"@"+discussion+"\n");
 		output.flush();
 		String reponse="";
 		reponse = input.readLine();
 		String name="";
 		String temp="";
-		int id=0;
 		List <User> u = new ArrayList<User>();
 		int nbdot =0;
 		for(char car : reponse.toCharArray()) {
@@ -118,7 +117,7 @@ public abstract class User {
 				}
 				else {
 					if(nbdot==1) {
-						id=atoi(temp);
+						discussion=atoi(temp);
 						nbdot++;
 						temp="";
 					}
@@ -132,7 +131,7 @@ public abstract class User {
 				temp=temp+String.valueOf(car);
 			}
 		}
-		discussions.add(new Discussion(name,new TreeSet<Message>(),u,id));
+		return new Discussion(name,new TreeSet<Message>(),u,id);
 		
 	}
 
@@ -158,10 +157,9 @@ public abstract class User {
 		String reponse="";
 		try {
 			reponse = input.readLine();
+			System.out.println(reponse);
 			if(!reponse.equals("WrongPassword")) {
 				this.id=atoi(reponse);
-				t= new Timer();
-				t.schedule(new Refresh(),1000,1000);
 				
 				System.out.println("Connected");
 			}
@@ -203,14 +201,11 @@ public abstract class User {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		t= new Timer();
-		t.schedule(new Refresh(),1000,1000);
 	}
 	public void disconnect(){
-		t.cancel();
-		t.purge();
 		try {
 			output.write("@disconnect@"+id+"\n");
+			output.flush();
 			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -221,9 +216,11 @@ public abstract class User {
 	public void requestGroup() {
 		try {
 			output.write("@requestGroup@"+id+"\n");
+			output.flush();
 			String reponse="";
 			while(!reponse.equals(".")) {
 				reponse = input.readLine();
+				System.out.println(reponse);
 				String name_group = "";
 				int id_group = 0;
 				List<User> membres= new LinkedList<User>();
@@ -287,6 +284,7 @@ public abstract class User {
 		groups.add(groupe);
 		try {
 			output.write("@joinGroup@"+id+"@"+groupe.getiD_group()+"\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -298,6 +296,7 @@ public abstract class User {
 		groups.remove(groupe);
 		try {
 			output.write("@leaveGroup@"+id+"@"+groupe.getiD_group()+"\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -337,6 +336,7 @@ public abstract class User {
 		discussion.getMessages().add(temp);
 		try {
 			output.write("@Message@"+getId()+"@"+discussion.getId()+"@"+temp.getMessage()+"\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -349,6 +349,7 @@ public abstract class User {
 		d.getGroup().add(this);
 		try {
 			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+temp.getMessage()+"\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -365,6 +366,7 @@ public abstract class User {
 	public void leaveConversation (Discussion conversation) {
 		try {
 			output.write("@LeaveC@"+id+"@"+conversation.getId()+"\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -377,15 +379,41 @@ public abstract class User {
 	public String toString() {
 		return "User [name=" + name + "]";
 	}
+	public String requestName(int other_id) {
+		try {
+			output.write("@RName@"+id+"@"+other_id+"\n");
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String reponse="";
+		try {
+			reponse = input.readLine();
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return reponse;
+		
+	}
 
 	public NavigableSet<Discussion> getDiscussions() {
+		 Refresh ();
+		ArrayList <Discussion>discussionToDelete = new ArrayList<Discussion>();
+		 for(Discussion d : discussions) {
+			 if(d.getGroup().isEmpty()) {
+				 discussionToDelete.add(d);
+			 }
+		 }
+		 for(Discussion f : discussionToDelete) {
+			 discussions.remove(f);
+		 }
+		 System.out.println(discussions.toString());
 		return discussions;
 	}
 	
-	private class Refresh extends TimerTask {
-
-		@Override
-		public void run() {
+	private void Refresh () {
 			String command="@Refresh@"+id;
 					try {
 						output.write(command +"\n");
@@ -396,10 +424,13 @@ public abstract class User {
 					}
 				
 			String reponse="";
+			ArrayList<Message> unread= new ArrayList<Message>();
+			ArrayList<Integer> ploup = new ArrayList<Integer>();
 			while(!reponse.equals(".")) {
 				try {
 					reponse = input.readLine();
-					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
+					reponse=reponse.replaceFirst("@", "");
+					//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
 					String expediteur = "";
 					int id_discussion = 0;
 					int id_message = 0;
@@ -416,7 +447,8 @@ public abstract class User {
 							}
 							else {
 								if(nbdot==1) {
-									id=atoi(temp);
+									
+									id_discussion=atoi(temp);
 									nbdot++;
 									temp="";
 								}
@@ -449,18 +481,34 @@ public abstract class User {
 						}
 						if(!already_read) {
 							d.getMessages().add(new Message(contenu,Status.received,date,atoi(expediteur),id_message));
-							output.write("@ack@"+id_message+"\n");
+							already_read=true;
 						}
 					}
+					if(!already_read) {
+						unread.add(new Message(contenu,Status.received,date,atoi(expediteur),id_message));
+						ploup.add(id_discussion);
+						
+					}
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			for(int i=0; i<ploup.size();i++) {
+				Discussion m = null;
+				try {
+					m = request_discussion(ploup.get(i));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				m.getMessages().add(unread.get(i));
+				discussions.add(m);
+			}
 			
 		}
 		
-	}
 	
 	
 	public Discussion getDiscussion(int i) {
