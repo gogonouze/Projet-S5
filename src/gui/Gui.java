@@ -10,6 +10,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 
 import gui.gui_element.PopUp_NewDiscussion;
+import gui.gui_element.PopUp_NewGroup;
 import object.Discussion;
 import object.Message;
 import object.User;
@@ -46,6 +47,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JCheckBox;
+import javax.swing.BoxLayout;
 
 public class Gui {
 	
@@ -65,6 +67,7 @@ public class Gui {
 	private final Action newDiscussion = new SwingAction();
 	private final Action Send = new SwingAction_1();
 	private final Action action = new SwingAction_2();
+	private final Action action_1 = new SwingAction_3();
 	
 	
 	/**
@@ -114,6 +117,7 @@ public class Gui {
 		
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1, BorderLayout.SOUTH);
+		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.setAction(newDiscussion);
@@ -122,6 +126,10 @@ public class Gui {
 		JButton refreshButton = new JButton("New button");
 		refreshButton.setAction(action);
 		panel_1.add(refreshButton);
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		btnNewButton_1.setAction(action_1);
+		panel_1.add(btnNewButton_1);
 		
 		list = new JList();		
 		list.addMouseListener(new MouseAdapter() {
@@ -288,6 +296,15 @@ public class Gui {
 		}
 		public void actionPerformed(ActionEvent e) {
 			updateDiscussionsList();
+		}
+	}
+	private class SwingAction_3 extends AbstractAction {
+		public SwingAction_3() {
+			putValue(NAME, "Create new group");
+			putValue(SHORT_DESCRIPTION, "Create new group");
+		}
+		public void actionPerformed(ActionEvent e) {
+			PopUp_NewGroup.launch(user);
 		}
 	}
 }
