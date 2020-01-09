@@ -51,10 +51,11 @@ public class PopUp_NewGroup extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_NewGroup(User user) {
+		setResizable(false);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);
 		this.user = user;
-		setBounds(100, 100, 215, 115);
+		setBounds(100, 100, 251, 125);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -65,7 +66,7 @@ public class PopUp_NewGroup extends JDialog {
 		
 		groupNameText = new JTextField();
 		contentPanel.add(groupNameText);
-		groupNameText.setColumns(10);
+		groupNameText.setColumns(15);
 		
 		
 		JPanel buttonPane = new JPanel();
@@ -89,11 +90,12 @@ public class PopUp_NewGroup extends JDialog {
 
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
-			putValue(NAME, "SwingAction");
+			putValue(NAME, "Create group");
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
 			user.createGroup(groupNameText.getText());
+			dispose();
 		}
 	}
 	

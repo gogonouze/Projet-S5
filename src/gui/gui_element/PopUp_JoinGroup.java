@@ -98,15 +98,15 @@ public class PopUp_JoinGroup extends JDialog {
 
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(NAME, "Join group");
+			putValue(SHORT_DESCRIPTION, "join group");
 		}
 		public void actionPerformed(ActionEvent e) {
 			int index = comboBox.getSelectedIndex();
 			int id = list_id.get(index);
 					
 			user.joinGroup(user.getGroupFromAllGroup(id));
-
+			dispose();
 		}
 	}
 	
