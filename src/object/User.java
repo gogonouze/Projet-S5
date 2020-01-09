@@ -259,12 +259,19 @@ public abstract class User {
 					allGroup.remove(g);
 					allGroup.add(g);
 				}
+				majGroup();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 	
+		
+	}
+	private void majGroup() {
+		for (Group g : groups) {
+			g =allGroup.get(allGroup.indexOf(g));
+		}
 		
 	}
 	public void joinGroup(Group groupe) {
