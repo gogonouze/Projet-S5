@@ -8,7 +8,9 @@ Projet L3S5 Informatique
 * Redirection du ticket par le serveur vers un opérateur compétant
 * Communication client-opérateur via serveur
 * ~~Clôture du ticket~~
-* ~~Conservation de l'historique de la communication utilisateur/serveur~~
+* Conservation de l'historique de la communication utilisateur/serveur
+* Interface pour les utilisateurs
+* Création de compte
 
 ### Pré-requis
 
@@ -36,5 +38,5 @@ Projet L3S5 Informatique
 
 ### Auteurs
 * **EB-LEVADOUX Ugo** - *Initial work* - [gogonouze](https://github.com/gogonouze)
-* **MEUNIER Romain** - *Initial work* - [UnkneesDwark](https://github.com/UnkneesDwark)
+* **MEUNIER Romain** **[MVP⭐]** - *Initial work* - [UnkneesDwark](https://github.com/UnkneesDwark)
 * **RIGAL Pierre** - *Initial work* - [Nibellung](https://github.com/Nibellung)

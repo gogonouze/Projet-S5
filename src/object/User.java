@@ -40,7 +40,7 @@ public abstract class User {
 	Socket socket;
 	public User(String name) {
 		this.name = name;
-	
+
 	}
 
 	public User(String name, int id) {
@@ -131,8 +131,8 @@ public abstract class User {
 				temp=temp+String.valueOf(car);
 			}
 		}
-		return new Discussion(name,new TreeSet<Message>(),u,id);
-		
+		return new Discussion(name,new TreeSet<Message>(),u,discussion);
+
 	}
 
 	public boolean connect(String userName, String password) {
@@ -144,7 +144,7 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String command="";	
+		String command="";
 		command="@Connection@"+userName+"@"+password+"@"+id;
 				try {
 					output.write(command +"\n");
@@ -153,14 +153,14 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			
+
 		String reponse="";
 		try {
 			reponse = input.readLine();
 			System.out.println(reponse);
 			if(!reponse.equals("WrongPassword")) {
 				this.id=atoi(reponse);
-				
+
 				System.out.println("Connected");
 			}
 			else {
@@ -171,9 +171,9 @@ public abstract class User {
 				e.printStackTrace();
 			}
 		return !reponse.equals("WrongPassword");
-		
+
 	}
-	
+
 	public void create_account(String userName, String password) {
 		try {
 			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
@@ -183,7 +183,7 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String command="";	
+		String command="";
 		command="@createAccount@"+userName+"@"+password;
 				try {
 					output.write(command +"\n");
@@ -192,7 +192,7 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			
+
 		String reponse="";
 		try {
 			reponse = input.readLine();
@@ -206,12 +206,12 @@ public abstract class User {
 		try {
 			output.write("@disconnect@"+id+"\n");
 			output.flush();
-			
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
 	public void requestGroup() {
 		try {
@@ -220,7 +220,6 @@ public abstract class User {
 			String reponse="";
 			while(!reponse.equals(".")) {
 				reponse = input.readLine();
-				System.out.println(reponse);
 				String name_group = "";
 				int id_group = 0;
 				List<User> membres= new LinkedList<User>();
@@ -243,8 +242,8 @@ public abstract class User {
 								membres.add(new Client(temp));
 								temp = "";
 							}
-								
-							
+
+
 						}
 					}
 					else {
@@ -270,15 +269,15 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-	
-		
+
+
+
 	}
 	private void majGroup() {
 		for (Group g : groups) {
 			g =allGroup.get(allGroup.indexOf(g));
 		}
-		
+
 	}
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
@@ -289,9 +288,9 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
 		try {
@@ -301,14 +300,14 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 	public void createGroup(String nameG) {
 		List<User> l =new ArrayList<User>();
 		l.add((Client) this);
 		Group g = new Group(nameG, 0, l );
-		
-		String command="";	
+
+		String command="";
 		command="@createGroup@"+nameG+"@"+id;
 				try {
 					output.write(command +"\n");
@@ -317,7 +316,7 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			
+
 		String reponse="";
 		try {
 			synchronized (reponse) {
@@ -341,14 +340,24 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public void createConversation( String message, String name_conv ,Group group) {
-		Message temp = new Message(message);
-		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), new Message(message));
-		d.getGroup().add(this);
+		String reponse="";
 		try {
-			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+temp.getMessage()+"\n");
+			reponse = input.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		temp.setIdAuthor(id);
+
+		temp.setId(atoi(reponse));
+		discussion.getMessages().add(temp);
+	}
+
+	public void createConversation( String message, String name_conv ,Group group) {
+		Message tempo = new Message(message);
+		int idConv=0;
+		try {
+			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+tempo.getMessage()+"\n");
 			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -357,11 +366,31 @@ public abstract class User {
 		String reponse="";
 		try {
 			reponse = input.readLine();
-			d.setId_Conv(atoi(reponse));
+			 idConv=0;
+			int idMessage = 0;
+			String temp ="";
+			for(char car : reponse.toCharArray()) {
+				if(car=='@') {
+					idConv=atoi(temp);
+				}
+				else {
+					temp=temp+String.valueOf(car);
+				}
+			}
+			idMessage= atoi(temp);
+
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		tempo.setIdAuthor(id);
+		tempo.setId(idConv);
+		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), tempo);
+		d.getGroup().add(this);
+
+		d.setId_Conv(idConv);
+
+		discussions.add(d);
 	}
 	public void leaveConversation (Discussion conversation) {
 		try {
@@ -372,13 +401,15 @@ public abstract class User {
 			e.printStackTrace();
 		}
 		this.discussions.remove(conversation);
-		
+
 	}
 
 	public String toString() {
 		return "User [name=" + name + "]";
 	}
 	public String requestName(int other_id) {
+		String reponse="";
+		if(other_id!=0) {
 		try {
 			output.write("@RName@"+id+"@"+other_id+"\n");
 			output.flush();
@@ -386,15 +417,15 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String reponse="";
 		try {
 			reponse = input.readLine();
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
 		return reponse;
-		
+
 	}
 
 	public NavigableSet<Discussion> getDiscussions() {
@@ -408,10 +439,9 @@ public abstract class User {
 		 for(Discussion f : discussionToDelete) {
 			 discussions.remove(f);
 		 }
-		 System.out.println(discussions.toString());
 		return discussions;
 	}
-	
+
 	private void Refresh () {
 			String command="@Refresh@"+id;
 					try {
@@ -421,7 +451,7 @@ public abstract class User {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				
+
 			String reponse="";
 			ArrayList<Message> unread= new ArrayList<Message>();
 			ArrayList<Integer> ploup = new ArrayList<Integer>();
@@ -429,7 +459,7 @@ public abstract class User {
 				try {
 					reponse = input.readLine();
 					reponse=reponse.replaceFirst("@", "");
-					//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
+					//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu"
 					String expediteur = "";
 					int id_discussion = 0;
 					int id_message = 0;
@@ -446,7 +476,7 @@ public abstract class User {
 							}
 							else {
 								if(nbdot==1) {
-									
+
 									id_discussion=atoi(temp);
 									nbdot++;
 									temp="";
@@ -486,9 +516,9 @@ public abstract class User {
 					if(!already_read) {
 						unread.add(new Message(contenu,Status.received,date,atoi(expediteur),id_message));
 						ploup.add(id_discussion);
-						
+
 					}
-					
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -505,14 +535,14 @@ public abstract class User {
 				m.getMessages().add(unread.get(i));
 				discussions.add(m);
 			}
-			
+
 		}
-		
-	
-	
+
+
+
 	public Discussion getDiscussion(int i) {
 		for (Discussion d : this.discussions) {
-			if (d.getId() == i) 
+			if (d.getId() == i)
 				return d;
 		}
 		return null;
@@ -521,5 +551,6 @@ public abstract class User {
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
-		
+
+
 }

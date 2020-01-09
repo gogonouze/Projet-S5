@@ -165,8 +165,9 @@ public class Server implements Runnable{
 															}
 														}
 														message=temp;
-														updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
-														
+														int i=updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
+														communication.get(atoi(user)).write(i+"\n");
+														communication.get(atoi(user)).flush();
 												}
 													else {
 														//Quitte une conversation
@@ -225,10 +226,10 @@ public class Server implements Runnable{
 															message=temp;
 															group.getGroup().add(getUser(atoi(user)));
 															int i =addDiscussion(discussion,group);
+															int j=updateBDDMessage(getUser(atoi(user)),getDiscussion(atoi(discussion)),message);
 															
-															communication.get(atoi(user)).write(i+"\n");
+															communication.get(atoi(user)).write(i+"@"+j+"\n");
 															communication.get(atoi(user)).flush();
-															updateBDDMessage(getUser(atoi(user)),getDiscussion(i),message);
 														}
 														else {
 															if(input.startsWith("@Rdiscussion@")) {
@@ -371,7 +372,6 @@ public class Server implements Runnable{
 
 
 	protected void disconnectUser(int id) {
-		System.out.println(communication.toString());
 		
 	}
 	
@@ -393,7 +393,6 @@ public class Server implements Runnable{
 		List<Group> zbreh= getAllGroup();
 		if(zbreh!=null) {
 			for(Group arouf : zbreh) {
-				System.out.println(arouf.BetterToString());
 				try {
 						communication.get(id).write(arouf.BetterToString()+"\n");
 						communication.get(id).flush();
@@ -435,7 +434,6 @@ public class Server implements Runnable{
 	protected void giveDiscussion(Discussion discussion, String user) {
 		int id_user=atoi(user);
 		try {
-				System.out.println(discussion.toStringBis());
 				communication.get(id_user).write(discussion.toStringBis()+"\n");
 				communication.get(id_user).flush();
 			
@@ -613,7 +611,6 @@ public class Server implements Runnable{
 		int id_user=atoi(user);
 		//renvoie tout les message non lus renvoyés par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@contenu" 
 		LinkedList<String> unviewedmessage=getAllMessage(id_user);
-		System.out.println(unviewedmessage.toString());
 		if(!unviewedmessage.isEmpty()) {
 			for(String message : unviewedmessage) {
 				try {
