@@ -55,7 +55,7 @@ public class PopUp_NewGroup extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);
 		this.user = user;
-		setBounds(100, 100, 253, 129);
+		setBounds(100, 100, 290, 125);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
