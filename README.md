@@ -10,6 +10,23 @@ Projet L3S5 Informatique
 * Clôture du ticket
 * Conservation de l'historique de la communication utilisateur/serveur
 
+### Pré-requis
+
+* [Java](https://www.java.com/fr/) - à jours
+
+### Installation
+
+
+
+## Démarrage
+
+...
+
+## Fabriqué avec
+
+* [Eclipse](https://www.eclipse.org) - IDE java
+
+
 ### Auteurs
 * **EB-LEVADOUX Ugo** - *Initial work* - [gogonouze](https://github.com/gogonouze)
 * **MEUNIER Romain** - *Initial work*
