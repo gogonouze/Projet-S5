@@ -14,7 +14,7 @@ import object.Group;
 public class TestGui {
 
 	public static void main(String[] args) {
-		User user = new Client("alphonse") ;
+		User user = new Client("alphonse", 0) ;
 		
 		List<User> users = new ArrayList<>();
 		users.add(user);
