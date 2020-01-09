@@ -70,6 +70,7 @@ public class Gui {
 	private final Action action = new SwingAction_2();
 	private final Action action_1 = new SwingAction_3();
 	private final Action action_2 = new SwingAction_4();
+	private final Action action_3 = new SwingAction_5();
 	
 	
 	/**
@@ -141,7 +142,7 @@ public class Gui {
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+				displayContent();
 			}
 		});
 		list.setBackground(Color.WHITE);
@@ -164,6 +165,10 @@ public class Gui {
 		sendButton = new JButton("New button");
 		sendButton.setAction(Send);
 		panel_4.add(sendButton);
+		
+		JButton btnNewButton_3 = new JButton("New button");
+		btnNewButton_3.setAction(action_3);
+		panel_4.add(btnNewButton_3);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -189,7 +194,7 @@ public class Gui {
 		
 		updateDiscussionsList();
 		list.setModel(model);
-		t.schedule(new Display(), 1,300);
+		//t.schedule(new Display(), 1,300);
 		t.schedule(new SendEnable(), 1, 300);
 	}
 	
@@ -242,7 +247,7 @@ public class Gui {
 		displayArea.setText("");
 	}
 	
-	private class Display extends TimerTask {
+	/*private class Display extends TimerTask {
 		
 		@Override
 		public void run() {
@@ -254,7 +259,7 @@ public class Gui {
 			
 		}
 		
-	}
+	}*/
 	
 	private class SendEnable extends TimerTask {
 		
@@ -320,6 +325,16 @@ public class Gui {
 		}
 		public void actionPerformed(ActionEvent e) {
 			PopUp_JoinGroup.launch(user);
+		}
+	}
+	private class SwingAction_5 extends AbstractAction {
+		public SwingAction_5() {
+			putValue(NAME, "refresh");
+			putValue(SHORT_DESCRIPTION, "refresh message");
+		}
+		public void actionPerformed(ActionEvent e) {
+			
+			displayContent();
 		}
 	}
 }
