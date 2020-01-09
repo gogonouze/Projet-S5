@@ -53,12 +53,14 @@ import javax.swing.BoxLayout;
 public class Gui {
 	
 
-	private JFrame frmOui;
+	private JFrame frame;
 	private JTextArea displayArea;
 	private JTextArea messageArea;
 	private User user;
 	private JButton sendButton;
 
+	private Color buttonColor = new Color(104, 124, 196);
+	
 	Timer t = new Timer();
 	
 	private JList<String> list;
@@ -81,7 +83,7 @@ public class Gui {
 			public void run() {
 				try {
 					Gui window = new Gui(user);
-					window.frmOui.setVisible(true);
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -102,13 +104,13 @@ public class Gui {
 	 */
 	private void initialize() {
 		
-		frmOui = new JFrame();
-		frmOui.setTitle(user.getNameUser());
-		frmOui.setMinimumSize(new Dimension(500,300));
-		frmOui.setSize(new Dimension(750, 450));
-		frmOui.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-		frmOui.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frmOui.addWindowListener(new WindowAdapter() {
+		frame = new JFrame();
+		frame.setTitle(user.getNameUser());
+		frame.setMinimumSize(new Dimension(500,300));
+		frame.setSize(new Dimension(750, 450));
+		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
                 leave();
             }
@@ -116,8 +118,9 @@ public class Gui {
 		
 		
 		JPanel panel = new JPanel();
-		frmOui.getContentPane().add(panel, BorderLayout.WEST);
+		frame.getContentPane().add(panel, BorderLayout.WEST);
 		panel.setLayout(new BorderLayout(0, 0));
+		panel.setBackground(new Color(34, 34, 40));
 		
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1, BorderLayout.SOUTH);
@@ -129,6 +132,7 @@ public class Gui {
 		
 		JButton refreshButton = new JButton("New button");
 		refreshButton.setAction(action);
+		refreshButton.setBackground(buttonColor);
 		panel_1.add(refreshButton);
 		
 		JButton btnNewButton_1 = new JButton("New button");
@@ -146,13 +150,13 @@ public class Gui {
 				displayContent();
 			}
 		});
-		list.setBackground(Color.WHITE);
-		list.setForeground(Color.BLACK);
+		list.setBackground(new Color(41,41,50));
+		list.setForeground(new Color(255,255,255));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		panel.add(list, BorderLayout.CENTER);
 		
 		JPanel panel_2 = new JPanel();
-		frmOui.getContentPane().add(panel_2, BorderLayout.CENTER);
+		frame.getContentPane().add(panel_2, BorderLayout.CENTER);
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_3 = new JPanel();
@@ -165,6 +169,7 @@ public class Gui {
 		
 		sendButton = new JButton("New button");
 		sendButton.setAction(Send);
+		sendButton.setBackground(buttonColor);
 		panel_4.add(sendButton);
 		
 		JButton btnNewButton_3 = new JButton("New button");
@@ -179,6 +184,8 @@ public class Gui {
 		messageArea.setLineWrap(true);
 		messageArea.setWrapStyleWord(true);
 		messageArea.setRows(3);
+		messageArea.setBackground(new Color(64,68,75));
+		messageArea.setForeground(new Color(255,255,255));
 		scrollPane_1.setViewportView(messageArea);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -191,7 +198,15 @@ public class Gui {
 		displayArea.setEditable(false);
 		displayArea.setLineWrap(true);
 		displayArea.setWrapStyleWord(true);
+		displayArea.setBackground(new Color(54,57,63));
+		displayArea.setForeground(new Color(255,255,255));
 		scrollPane.setViewportView(displayArea);
+		
+		btnNewButton.setBackground(buttonColor);
+		btnNewButton_1.setBackground(buttonColor);
+		btnNewButton_2.setBackground(buttonColor);
+		btnNewButton_3.setBackground(buttonColor);
+		
 		
 		updateDiscussionsList();
 		list.setModel(model);
