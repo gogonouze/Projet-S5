@@ -1,6 +1,4 @@
 package object;
-
-
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -137,7 +135,7 @@ public abstract class User {
 		
 	}
 
-	public void connect(String userName, String password) {
+	public boolean connect(String userName, String password) {
 		try {
 			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
 			socket.getKeepAlive();
@@ -163,6 +161,7 @@ public abstract class User {
 				this.id=atoi(reponse);
 				t= new Timer();
 				t.schedule(new Refresh(),1000,1000);
+				
 				System.out.println("Connected");
 			}
 			else {
@@ -172,6 +171,7 @@ public abstract class User {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		return !reponse.equals("wrongPassword");
 		
 	}
 	
@@ -206,20 +206,16 @@ public abstract class User {
 		t.schedule(new Refresh(),1000,1000);
 	}
 	public void disconnect(){
+		t.cancel();
+		t.purge();
 		try {
 			output.write("@disconnect@"+id+"\n");
-			output.close();
-			input.close();
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		try{
-			socket.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		t.cancel();
+		
 	}
 	public void requestGroup() {
 		try {
@@ -351,7 +347,7 @@ public abstract class User {
 		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), new Message(message));
 		d.getGroup().add(this);
 		try {
-			output.write("@NeWMessage@"+name_conv+"@"+id+"@"+group.toStringBis()+temp.getMessage()+"\n");
+			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+temp.getMessage()+"\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -401,7 +397,9 @@ public abstract class User {
 			String reponse="";
 			while(!reponse.equals(".")) {
 				try {
+					System.out.println("jfklhtrjgrklj");
 					reponse = input.readLine();
+					System.out.println(reponse);
 					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
 					String expediteur = "";
 					int id_discussion = 0;
@@ -478,11 +476,28 @@ public abstract class User {
 		discussions.add(discussion);
 	}
 	public static void main(String[] args){
-		User arouf = new Client("arouf");
-		arouf.create_account(arouf.getNameUser(), "gangsta");
-		arouf.disconnect();
-		arouf.connect(arouf.getNameUser(), "yolo");
-		arouf.connect(arouf.getNameUser(), "gangsta");
+		User me = new Client("Romain");
+		me.create_account(me.getNameUser(), "MyMdP");
+		me.disconnect();
+		me.connect(me.getNameUser(), "MyMdP");
+		User ugo = new Client("Ugo");
+		User pierre = new Client("Pierre");
+		ugo.create_account(ugo.getNameUser(), "Grincant");
+		pierre.create_account(pierre.getNameUser(), "vache");
+		me.createGroup("le groupe de projet");
+		ugo.requestGroup();
+		System.out.println(ugo.getAllGroup().toString());
+		pierre.requestGroup();
+		System.out.println(pierre.getAllGroup().toString());
+		ugo.joinGroup(ugo.allGroup.get(0));
+		pierre.joinGroup(pierre.allGroup.get(0));
+		
+		pierre.leaveGroup(pierre.groups.first());
+		pierre.createConversation("yo les boys", "L3Info", pierre.allGroup.get(0));
+		ugo.disconnect();
+		pierre.disconnect();
+		me.disconnect();
+		System.out.println("test");
 	}
 	
 }

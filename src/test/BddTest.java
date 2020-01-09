@@ -613,9 +613,7 @@ public class BddTest {
 	}
 	
 	public static void main(String[] args) {
-		
-
-		System.out.println(getAllMessage(2).toString());
+		adduserBDD("Arouf", "Gagnsta");
 	}
 	
 }
