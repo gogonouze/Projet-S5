@@ -458,4 +458,8 @@ public abstract class User {
 		discussions.add(discussion);
 	}
 	
+	public void debug_addGroup(Group group) {
+		groups.add(group);
+	}
+	
 }
