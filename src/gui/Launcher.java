@@ -73,22 +73,30 @@ public class Launcher {
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 298, 184);
+		frame.setBackground(new Color(34,34,40));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		frame.getContentPane().setBackground(new Color(34,34,40));
+		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(34,34,40));
 		frame.getContentPane().add(panel, BorderLayout.SOUTH);
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(34,34,40));
 		panel.add(panel_1, BorderLayout.NORTH);
 		
 		ErrorLabel = new JLabel("");
 		panel_1.add(ErrorLabel);
 		
 		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(new Color(34,34,40));
 		panel.add(panel_2, BorderLayout.CENTER);
 		
 		JButton createAccountButton = new JButton("New button");
+		createAccountButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		createAccountButton.setForeground(new Color(255, 255, 255));
 		createAccountButton.setAction(action_1);
 		createAccountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -97,31 +105,48 @@ public class Launcher {
 		panel_2.add(createAccountButton);
 		
 		JButton connectionButton = new JButton("New button");
+		connectionButton.setForeground(new Color(255, 255, 255));
+		connectionButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		connectionButton.setAction(action);
 		panel_2.add(connectionButton);
 		
 		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(new Color(34,34,40));
 		frame.getContentPane().add(panel_3, BorderLayout.CENTER);
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
 		
 		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(new Color(34,34,40));
 		panel_3.add(panel_4);
 		
 		JLabel lblPseudo = new JLabel("Login");
+		lblPseudo.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblPseudo.setForeground(new Color(255, 255, 255));
 		panel_4.add(lblPseudo);
 		
 		loginText = new JTextField();
+		loginText.setBackground(new Color(64,68,75));
+		loginText.setForeground(new Color(255,255,255));
+		
 		panel_4.add(loginText);
 		loginText.setColumns(10);
 		
 		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(new Color(34,34,40));
 		panel_3.add(panel_5);
 		
 		JLabel lblNewLabel = new JLabel("Password");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNewLabel.setForeground(new Color(255, 255, 255));
 		panel_5.add(lblNewLabel);
 		
 		passwordText = new JPasswordField();
 		passwordText.setColumns(10);
+		passwordText.setBackground(new Color(64,68,75));
+		passwordText.setForeground(new Color(255,255,255));
+		
+		
+		
 		panel_5.add(passwordText);
 	
 

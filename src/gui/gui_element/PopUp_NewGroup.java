@@ -1,6 +1,7 @@
 package gui.gui_element;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -17,10 +18,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.Action;
+import java.awt.Font;
 
 public class PopUp_NewGroup extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	
+	private Color buttonColor = new Color(66, 73, 106);
 	
 	private User user;
 	/**
@@ -57,24 +61,37 @@ public class PopUp_NewGroup extends JDialog {
 		setAlwaysOnTop(true);
 		this.user = user;
 		setBounds(100, 100, 290, 125);
+		setBackground(new Color(34,34,40));
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.WEST);
+		getContentPane().setBackground(new Color(34,34,40));
+		
+		contentPanel.setBackground(new Color(34,34,40));
 		
 		JLabel lblNewLabel = new JLabel("Group name");
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 		contentPanel.add(lblNewLabel);
 		
 		groupNameText = new JTextField();
+		groupNameText.setBackground(new Color(64,68,75));
+		groupNameText.setForeground(new Color(255,255,255));
+		
 		contentPanel.add(groupNameText);
 		groupNameText.setColumns(15);
 		
 		
 		JPanel buttonPane = new JPanel();
+		buttonPane.setBackground(new Color(34,34,40));
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
 		okButton = new JButton("OK");
+		okButton.setBackground(buttonColor);
+		okButton.setForeground(new Color(255, 255, 255));
+		okButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		okButton.setAction(action);
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -82,6 +99,9 @@ public class PopUp_NewGroup extends JDialog {
 		
 		
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setBackground(buttonColor);
+		cancelButton.setForeground(new Color(255, 255, 255));
+		cancelButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		cancelButton.setAction(action_1);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);

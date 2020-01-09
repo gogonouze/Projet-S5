@@ -116,6 +116,7 @@ public class PopUp_NewDiscussion extends JDialog {
 		contentPanel.add(scrollPane, BorderLayout.CENTER);
 			
 		textArea = new JTextArea();
+		textArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		textArea.setBackground(new Color(64,68,75));
 		textArea.setForeground(new Color(255,255,255));
 		

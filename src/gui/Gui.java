@@ -105,7 +105,7 @@ public class Gui {
 	private void initialize() {
 		
 		frame = new JFrame();
-		frame.setTitle(user.getNameUser());
+		frame.setTitle(user.requestName(user.getId()));
 		frame.setMinimumSize(new Dimension(500,300));
 		frame.setSize(new Dimension(750, 450));
 		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
@@ -270,9 +270,9 @@ public class Gui {
 		for (Message m : discussion.getMessages()) {
 			String messageContent = m.getMessage();
 			int id = m.getIdAuthor();
-			User messageAuthor = getUser(group, id);
+			String messageAuthor = user.requestName(id);
 			
-			displayArea.append("["+messageAuthor.getNameUser()+"]"+" :"+"\n");
+			displayArea.append("["+messageAuthor+"]"+" :"+"\n");
 			
 			displayArea.append(messageContent+"\n");
 			

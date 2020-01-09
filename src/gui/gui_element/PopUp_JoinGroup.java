@@ -1,6 +1,7 @@
 package gui.gui_element;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import java.util.TimerTask;
 
 import javax.swing.Action;
 import javax.swing.JComboBox;
+import java.awt.Font;
 
 public class PopUp_JoinGroup extends JDialog {
 
@@ -34,6 +36,8 @@ public class PopUp_JoinGroup extends JDialog {
 	private final Action action = new SwingAction();
 	private final Action action_1 = new SwingAction_1();
 	private JButton okButton;
+	
+	private Color buttonColor = new Color(66, 73, 106);
 	
 	private JComboBox<String> comboBox;
 	private List<Integer> list_id = new ArrayList<>();
@@ -68,10 +72,19 @@ public class PopUp_JoinGroup extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.WEST);
 		
+		setBackground(new Color(34,34,40));
+		getContentPane().setBackground(new Color(34,34,40));
+		contentPanel.setBackground(new Color(34,34,40));
+		
 		JLabel lblNewLabel = new JLabel("Pick a group");
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 		contentPanel.add(lblNewLabel);
 		
 		comboBox = new JComboBox();
+		comboBox.setBackground(buttonColor);
+		comboBox.setForeground(new Color(255, 255, 255));
+		comboBox.setFont(new Font("Tahoma", Font.BOLD, 10));
 		for (Group g : user.getAllGroup()) {
 			list_id.add(g.getiD_group());
 			comboBox.addItem(g.getName());
@@ -80,10 +93,14 @@ public class PopUp_JoinGroup extends JDialog {
 		
 		
 		JPanel buttonPane = new JPanel();
+		buttonPane.setBackground(new Color(34,34,40));
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
 		okButton = new JButton("OK");
+		okButton.setForeground(new Color(255, 255, 255));
+		okButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		okButton.setBackground(buttonColor);
 		okButton.setAction(action);
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -91,6 +108,9 @@ public class PopUp_JoinGroup extends JDialog {
 		
 		
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setBackground(buttonColor);
+		cancelButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		cancelButton.setForeground(new Color(255, 255, 255));
 		cancelButton.setAction(action_1);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
