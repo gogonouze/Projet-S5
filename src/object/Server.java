@@ -1,6 +1,4 @@
 package object;
-
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -980,7 +978,7 @@ protected int adduserBDD(String user, String password) {
 	}
 	
 	protected void connect_user(String user, String password, String id, Socket s) throws IOException {
-		Integer id_user=atoi(user);
+		Integer id_user=atoi(id);
 		if(debugmatchpassword(id_user,password)) {
 			boolean is_present =false;
 				is_present=communication.containsKey(id_user);

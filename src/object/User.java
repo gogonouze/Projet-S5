@@ -1,4 +1,6 @@
 package object;
+
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.NavigableSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
+
 
 
 
@@ -35,10 +38,10 @@ public abstract class User {
 
 	private static final int PORT = 8952;
 	Socket socket;
-	Timer t = new Timer();
+	Timer t;
 	public User(String name) {
 		this.name = name;
-
+	
 	}
 
 	public User(String name, int id) {
@@ -131,7 +134,7 @@ public abstract class User {
 			}
 		}
 		discussions.add(new Discussion(name,new TreeSet<Message>(),u,id));
-
+		
 	}
 
 	public void connect(String userName, String password) {
@@ -143,7 +146,7 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String command="";
+		String command="";	
 		command="@Connection@"+userName+"@"+password+"@"+id;
 				try {
 					output.write(command +"\n");
@@ -152,20 +155,26 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
+			
 		String reponse="";
 		try {
 			reponse = input.readLine();
 			if(!reponse.equals("WrongPassword")) {
 				this.id=atoi(reponse);
+				t= new Timer();
+				t.schedule(new Refresh(),1000,1000);
+				System.out.println("Connected");
+			}
+			else {
+				System.out.println("wrongPassword");
 			}
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		t.schedule(new Refresh(),1000,1000);
+		
 	}
-
+	
 	public void create_account(String userName, String password) {
 		try {
 			socket = new Socket(InetAddress.getLocalHost(),PORT);//"192.168.43.95", PORT);
@@ -175,7 +184,7 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String command="";
+		String command="";	
 		command="@createAccount@"+userName+"@"+password;
 				try {
 					output.write(command +"\n");
@@ -184,7 +193,7 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
+			
 		String reponse="";
 		try {
 			reponse = input.readLine();
@@ -193,7 +202,8 @@ public abstract class User {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		t.schedule(new Refresh(),10000,10000);
+		t= new Timer();
+		t.schedule(new Refresh(),1000,1000);
 	}
 	public void disconnect(){
 		try {
@@ -206,7 +216,10 @@ public abstract class User {
 		}
 		try{
 			socket.close();
-		}catch(IOException e){e.printStackTrace();}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		t.cancel();
 	}
 	public void requestGroup() {
 		try {
@@ -236,8 +249,8 @@ public abstract class User {
 								membres.add(new Client(temp));
 								temp = "";
 							}
-
-
+								
+							
 						}
 					}
 					else {
@@ -263,15 +276,15 @@ public abstract class User {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
-
+		
+	
+		
 	}
 	private void majGroup() {
 		for (Group g : groups) {
 			g =allGroup.get(allGroup.indexOf(g));
 		}
-
+		
 	}
 	public void joinGroup(Group groupe) {
 		groups.add(groupe);
@@ -281,9 +294,9 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 	}
-
+	
 	public void leaveGroup(Group groupe) {
 		groups.remove(groupe);
 		try {
@@ -292,14 +305,14 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 	}
 	public void createGroup(String nameG) {
 		List<User> l =new ArrayList<User>();
 		l.add((Client) this);
 		Group g = new Group(nameG, 0, l );
-
-		String command="";
+		
+		String command="";	
 		command="@createGroup@"+nameG+"@"+id;
 				try {
 					output.write(command +"\n");
@@ -308,7 +321,7 @@ public abstract class User {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
+			
 		String reponse="";
 		try {
 			synchronized (reponse) {
@@ -332,7 +345,7 @@ public abstract class User {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void createConversation( String message, String name_conv ,Group group) {
 		Message temp = new Message(message);
 		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), new Message(message));
@@ -360,7 +373,7 @@ public abstract class User {
 			e.printStackTrace();
 		}
 		this.discussions.remove(conversation);
-
+		
 	}
 
 	@Override
@@ -371,7 +384,7 @@ public abstract class User {
 	public NavigableSet<Discussion> getDiscussions() {
 		return discussions;
 	}
-
+	
 	private class Refresh extends TimerTask {
 
 		@Override
@@ -384,12 +397,12 @@ public abstract class User {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-
+				
 			String reponse="";
 			while(!reponse.equals(".")) {
 				try {
 					reponse = input.readLine();
-					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu"
+					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
 					String expediteur = "";
 					int id_discussion = 0;
 					int id_message = 0;
@@ -447,23 +460,29 @@ public abstract class User {
 					e.printStackTrace();
 				}
 			}
-
+			
 		}
-
+		
 	}
-
-
+	
+	
 	public Discussion getDiscussion(int i) {
 		for (Discussion d : this.discussions) {
-			if (d.getId() == i)
+			if (d.getId() == i) 
 				return d;
 		}
 		return null;
 	}
-
+	
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
-
-
+	public static void main(String[] args){
+		User arouf = new Client("arouf");
+		arouf.create_account(arouf.getNameUser(), "gangsta");
+		arouf.disconnect();
+		arouf.connect(arouf.getNameUser(), "yolo");
+		arouf.connect(arouf.getNameUser(), "gangsta");
+	}
+	
 }
