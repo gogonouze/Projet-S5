@@ -8,7 +8,7 @@ Projet L3S5 Informatique
 * Redirection du ticket par le serveur vers un opérateur compétant
 * Communication client-opérateur via serveur
 * ~~Clôture du ticket~~
-* ~~Conservation de l'historique de la communication utilisateur/serveur~~
+* Conservation de l'historique de la communication utilisateur/serveur
 
 ### Pré-requis
 
