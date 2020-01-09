@@ -28,7 +28,6 @@ Projet L3S5 Informatique
 
 
 ### Auteurs 
-[![Contributors][contributors-shield]][contributors-url]
 * **EB-LEVADOUX Ugo** - *Initial work* - [gogonouze](https://github.com/gogonouze)
 * **MEUNIER Romain** - *Initial work* - [UnkneesDwark](https://github.com/UnkneesDwark)
 * **RIGAL Pierre** - *Initial work* - [Nibellung](https://github.com/Nibellung)
