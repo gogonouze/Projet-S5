@@ -38,6 +38,8 @@ public class Launcher {
 	private final Action action = new SwingAction();
 	private JLabel ErrorLabel;
 	
+	private Color buttonColor = new Color(66, 73, 106);
+	
 	private User user;
 	private final Action action_1 = new SwingAction_1();
 	private JPasswordField passwordText;
@@ -95,6 +97,7 @@ public class Launcher {
 		panel.add(panel_2, BorderLayout.CENTER);
 		
 		JButton createAccountButton = new JButton("New button");
+		createAccountButton.setBackground(buttonColor);
 		createAccountButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		createAccountButton.setForeground(new Color(255, 255, 255));
 		createAccountButton.setAction(action_1);
@@ -105,6 +108,7 @@ public class Launcher {
 		panel_2.add(createAccountButton);
 		
 		JButton connectionButton = new JButton("New button");
+		connectionButton.setBackground(buttonColor);
 		connectionButton.setForeground(new Color(255, 255, 255));
 		connectionButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		connectionButton.setAction(action);
