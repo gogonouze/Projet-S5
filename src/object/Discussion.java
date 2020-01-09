@@ -1,5 +1,6 @@
 package object;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -75,6 +76,13 @@ public class Discussion implements Comparable<Discussion>{
 	public String toString() {
 		return "Discussion [name=" + name + ", messages=" + messages + ", group=" + group + ", id_Conv=" + id_Conv
 				+ "]";
+	}
+	public String toStringBis() {
+		String retval ="";
+		for(User user : group) {
+			retval = retval+ user.getId()+"@";
+		}
+		return name+"@"+id_Conv+"@"+retval;
 	}
 	
 }

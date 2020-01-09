@@ -1,5 +1,6 @@
 package object;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,15 @@ public class Group implements Comparable<Group>{
 	public String toString() {
 		return "Group [iD_group=" + iD_group + ", group=" + group + "]";
 	}
+	public String toStringBis() {
+		String retval ="";
+		for(User user : group) {
+			retval = retval+ user.getId()+"@";
+		}
+		return retval;
+	}
 	public String BetterToString () {
-		String retval=name+"@"+iD_group+this.toString();
+		String retval=name+"@"+this.toStringBis();
 		return retval;
 	}
 	public Group() {
