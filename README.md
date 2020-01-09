@@ -18,7 +18,7 @@ Projet L3S5 Informatique
 ### Installation
 
 * Pour créer la base de données :
-    - Allumer **[wamp]**(http://www.wampserver.com)
+    - Allumer **[wamp](http://www.wampserver.com)**
     - Ouvrir **phpMyAdmin**
     - Utilisateur : **root** | Mot de passe : *(rien)*
     - Créer une nouvelle base de données qui s'appelle **bdd_projet_s5**
