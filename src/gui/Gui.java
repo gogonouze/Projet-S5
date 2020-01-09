@@ -333,6 +333,7 @@ public class Gui {
 			int index = list.getSelectedIndex();
 			int idDiscussion = list_id.get(index);
 			Discussion discussion = user.getDiscussion(idDiscussion); 
+			
 			user.sendMessage(messageArea.getText(), discussion);
 			messageArea.setText("");
 		}
