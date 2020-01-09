@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.GridBagLayout;
@@ -14,11 +16,15 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import net.miginfocom.swing.MigLayout;
+import object.User;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.Component;
 import javax.swing.Box;
 import java.awt.FlowLayout;
+import java.awt.Font;
+
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.GridLayout;
 import javax.swing.AbstractAction;
@@ -28,18 +34,21 @@ import javax.swing.Action;
 public class Launcher {
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField passwordText;
+	private JTextField loginText;
 	private final Action action = new SwingAction();
-
+	private JLabel ErrorLabel;
+	
+	private User user;
+	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void launch(User user) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Launcher window = new Launcher();
+					Launcher window = new Launcher(user);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,7 +60,8 @@ public class Launcher {
 	/**
 	 * Create the application.
 	 */
-	public Launcher() {
+	public Launcher(User user) {
+		this.user = user;
 		initialize();
 	}
 
@@ -60,7 +70,8 @@ public class Launcher {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 298, 275);
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 298, 184);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
@@ -70,7 +81,7 @@ public class Launcher {
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1, BorderLayout.NORTH);
 		
-		JLabel ErrorLabel = new JLabel("New label");
+		ErrorLabel = new JLabel("");
 		panel_1.add(ErrorLabel);
 		
 		JPanel panel_2 = new JPanel();
@@ -93,9 +104,9 @@ public class Launcher {
 		JLabel lblPseudo = new JLabel("Login");
 		panel_4.add(lblPseudo);
 		
-		textField_1 = new JTextField();
-		panel_4.add(textField_1);
-		textField_1.setColumns(10);
+		loginText = new JTextField();
+		panel_4.add(loginText);
+		loginText.setColumns(10);
 		
 		JPanel panel_5 = new JPanel();
 		panel_3.add(panel_5);
@@ -103,9 +114,9 @@ public class Launcher {
 		JLabel lblNewLabel = new JLabel("Password");
 		panel_5.add(lblNewLabel);
 		
-		textField = new JTextField();
-		panel_5.add(textField);
-		textField.setColumns(10);
+		passwordText = new JTextField();
+		panel_5.add(passwordText);
+		passwordText.setColumns(10);
 	
 
 		
@@ -113,10 +124,20 @@ public class Launcher {
 	}
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(NAME, "Connection");
+			putValue(SHORT_DESCRIPTION, "Connection");
 		}
 		public void actionPerformed(ActionEvent e) {
+			String login = loginText.getText();
+			String password = passwordText.getText();
+			
+			if(user.connect(login,password)) {
+				Gui.launch(user);
+				frame.dispose();
+			} else {
+				ErrorLabel.setText("Login or Password incorrect");
+				ErrorLabel.setForeground(Color.red);
+			}
 		}
 	}
 }
