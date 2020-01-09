@@ -131,7 +131,7 @@ public abstract class User {
 				temp=temp+String.valueOf(car);
 			}
 		}
-		return new Discussion(name,new TreeSet<Message>(),u,id);
+		return new Discussion(name,new TreeSet<Message>(),u,discussion);
 		
 	}
 
@@ -220,7 +220,6 @@ public abstract class User {
 			String reponse="";
 			while(!reponse.equals(".")) {
 				reponse = input.readLine();
-				System.out.println(reponse);
 				String name_group = "";
 				int id_group = 0;
 				List<User> membres= new LinkedList<User>();
@@ -341,14 +340,24 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String reponse="";
+		try {
+			reponse = input.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		temp.setIdAuthor(id);
+		
+		temp.setId(atoi(reponse));
+		discussion.getMessages().add(temp);
 	}
 	
 	public void createConversation( String message, String name_conv ,Group group) {
-		Message temp = new Message(message);
-		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), new Message(message));
-		d.getGroup().add(this);
+		Message tempo = new Message(message);
+		int idConv=0;
 		try {
-			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+temp.getMessage()+"\n");
+			output.write("@NeWMessage@"+name_conv+"@"+group.getiD_group()+"@"+id+"@"+tempo.getMessage()+"\n");
 			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -357,11 +366,31 @@ public abstract class User {
 		String reponse="";
 		try {
 			reponse = input.readLine();
-			d.setId_Conv(atoi(reponse));
+			 idConv=0;
+			int idMessage = 0;
+			String temp ="";
+			for(char car : reponse.toCharArray()) {
+				if(car=='@') {
+					idConv=atoi(temp);
+				}
+				else {
+					temp=temp+String.valueOf(car);
+				}
+			}
+			idMessage= atoi(temp);
+			
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		tempo.setIdAuthor(id);
+		tempo.setId(idConv);
+		Discussion d = new Discussion(message, new Group("", 0, group.getGroup()), tempo);
+		d.getGroup().add(this);
+		
+		d.setId_Conv(idConv);
+	
+		discussions.add(d);
 	}
 	public void leaveConversation (Discussion conversation) {
 		try {
@@ -379,6 +408,8 @@ public abstract class User {
 		return "User [name=" + name + "]";
 	}
 	public String requestName(int other_id) {
+		String reponse="";
+		if(other_id!=0) {
 		try {
 			output.write("@RName@"+id+"@"+other_id+"\n");
 			output.flush();
@@ -386,13 +417,13 @@ public abstract class User {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String reponse="";
 		try {
 			reponse = input.readLine();
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
 		return reponse;
 		
 	}
@@ -408,7 +439,6 @@ public abstract class User {
 		 for(Discussion f : discussionToDelete) {
 			 discussions.remove(f);
 		 }
-		 System.out.println(discussions.toString());
 		return discussions;
 	}
 	
@@ -521,29 +551,6 @@ public abstract class User {
 	public void debug_addDiscussion(Discussion discussion) {
 		discussions.add(discussion);
 	}
-	public static void main(String[] args){
-		User me = new Client("Romain");
-		me.create_account(me.getNameUser(), "MyMdP");
-		me.disconnect();
-		me.connect(me.getNameUser(), "MyMdP");
-		User ugo = new Client("Ugo");
-		User pierre = new Client("Pierre");
-		ugo.create_account(ugo.getNameUser(), "Grincant");
-		pierre.create_account(pierre.getNameUser(), "vache");
-		me.createGroup("le groupe de projet");
-		ugo.requestGroup();
-		System.out.println(ugo.getAllGroup().toString());
-		pierre.requestGroup();
-		System.out.println(pierre.getAllGroup().toString());
-		ugo.joinGroup(ugo.allGroup.get(0));
-		pierre.joinGroup(pierre.allGroup.get(0));
-		
-		pierre.leaveGroup(pierre.groups.first());
-		pierre.createConversation("yo les boys", "L3Info", pierre.allGroup.get(0));
-		ugo.disconnect();
-		pierre.disconnect();
-		me.disconnect();
-		System.out.println("test");
-	}
+	
 	
 }

@@ -14,6 +14,30 @@ public class Message implements Comparable<Message>{
 	private int nbVu = 0;
 	
 	
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public void setDateCreation(String dateCreation) {
+		this.dateCreation = dateCreation;
+	}
+
+	public void setIdAuthor(int idAuthor) {
+		this.idAuthor = idAuthor;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setNbVu(int nbVu) {
+		this.nbVu = nbVu;
+	}
+
 	public Message(String message, Status status, String dateCreation, int idAuthor, int id) {
 		super();
 		this.message = message;
