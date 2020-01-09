@@ -946,7 +946,7 @@ private LinkedList<String> getAllMessage(int id) {
 	            ResultSet rst = stmt.executeQuery("SELECT IdU ," + "Name FROM bdd_projet_s5.user");
 	            while (rst.next()) {
 	                String n = rst.getString("Name");
-	                if (n == name) {
+	                if (n.equals( name)) {
 	                    int idU = rst.getInt("IdU");
 	                    lu.add(idU);
 	                }

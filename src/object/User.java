@@ -23,6 +23,7 @@ public abstract class User {
 	NavigableSet<Discussion> discussions= new TreeSet<Discussion>();
 	List<Group> allGroup = new ArrayList<Group>();
 	public List<Group> getAllGroup() {
+		requestGroup();
 		return allGroup;
 	}
 	public Group getGroupFromAllGroup(int id) {
@@ -171,7 +172,7 @@ public abstract class User {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		return !reponse.equals("wrongPassword");
+		return !reponse.equals("WrongPassword");
 		
 	}
 	
@@ -397,9 +398,7 @@ public abstract class User {
 			String reponse="";
 			while(!reponse.equals(".")) {
 				try {
-					System.out.println("jfklhtrjgrklj");
 					reponse = input.readLine();
-					System.out.println(reponse);
 					//renvoie tout les message non lus renvoyÃ©s par getAllUnviewedMessage sous la forme "Envoyeur@Discussion@Date@idmessage@contenu" 
 					String expediteur = "";
 					int id_discussion = 0;
