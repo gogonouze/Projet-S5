@@ -1,4 +1,4 @@
-package gui_element;
+package gui.gui_element;
 
 import object.User;
 import object.Group;

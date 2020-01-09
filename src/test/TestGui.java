@@ -6,7 +6,7 @@ import java.util.Random;
 
 import object.Client;
 import object.Discussion;
-import object.Gui;
+import gui.Gui;
 import object.Message;
 import object.User;
 import object.Group;

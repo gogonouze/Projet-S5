@@ -1,4 +1,4 @@
-package object;
+package gui;
 
 import java.awt.EventQueue;
 
@@ -9,7 +9,11 @@ import java.awt.GridLayout;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 
-import gui_element.PopUp_NewDiscussion;
+import gui.gui_element.PopUp_NewDiscussion;
+import object.Discussion;
+import object.Message;
+import object.User;
+
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -195,6 +199,7 @@ public class Gui {
 	}
 	
 	private void leave() {
+		user.disconnect();
 		System.exit(0);
 	}
 	
