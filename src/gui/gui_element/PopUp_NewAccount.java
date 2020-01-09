@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Font;
 
 public class PopUp_NewAccount extends JDialog {
 
@@ -36,6 +37,9 @@ public class PopUp_NewAccount extends JDialog {
 	private User user;
 	private final Action action_1 = new SwingAction_1();
 	private JTextField passwordText;
+	
+	private Color buttonColor = new Color(66, 73, 106);
+	
 
 	/**
 	 * Launch the application.
@@ -69,12 +73,15 @@ public class PopUp_NewAccount extends JDialog {
 		
 		JPanel panel = new JPanel();
 		contentPanel.add(panel, BorderLayout.SOUTH);
+		contentPanel.setBackground(new Color(34,34,40));
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_2 = new JPanel();
 		panel.add(panel_2, BorderLayout.CENTER);
 		
 		JButton createAccountButton = new JButton("New button");
+		createAccountButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		createAccountButton.setForeground(new Color(255, 255, 255));
 		createAccountButton.setAction(action_1);
 		createAccountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -83,6 +90,8 @@ public class PopUp_NewAccount extends JDialog {
 		panel_2.add(createAccountButton);
 		
 		JButton cancelButton = new JButton("New button");
+		cancelButton.setForeground(new Color(255, 255, 255));
+		cancelButton.setFont(new Font("Tahoma", Font.BOLD, 10));
 		cancelButton.setAction(action);
 		panel_2.add(cancelButton);
 		
@@ -106,6 +115,9 @@ public class PopUp_NewAccount extends JDialog {
 		panel_3.add(panel_6, gbc_panel_6);
 		
 		JLabel lblPseudo = new JLabel("user name");
+		lblPseudo.setForeground(new Color(255, 255, 255));
+		lblPseudo.setBackground(new Color(34,34,40));
+		lblPseudo.setFont(new Font("Tahoma", Font.BOLD, 12));
 		panel_6.add(lblPseudo);
 		
 		JPanel panel_4 = new JPanel();
@@ -119,6 +131,9 @@ public class PopUp_NewAccount extends JDialog {
 		panel_3.add(panel_4, gbc_panel_4);
 		
 		loginText = new JTextField();
+		loginText.setBackground(new Color(64,68,75));
+		loginText.setForeground(new Color(255,255,255));
+		
 		panel_4.add(loginText);
 		loginText.setColumns(10);
 		
@@ -133,6 +148,9 @@ public class PopUp_NewAccount extends JDialog {
 		panel_3.add(panel_7, gbc_panel_7);
 		
 		JLabel lblNewLabel = new JLabel("Password");
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNewLabel.setBackground(new Color(34,34,40));
 		panel_7.add(lblNewLabel);
 		
 		JPanel panel_5 = new JPanel();
@@ -145,8 +163,23 @@ public class PopUp_NewAccount extends JDialog {
 		panel_3.add(panel_5, gbc_panel_5);
 		
 		passwordText = new JTextField();
+		passwordText.setBackground(new Color(64,68,75));
+		passwordText.setForeground(new Color(255,255,255));
+		
 		panel_5.add(passwordText);
 		passwordText.setColumns(10);
+		
+		panel.setBackground(new Color(34,34,40));
+		panel_2.setBackground(new Color(34,34,40));
+		panel_3.setBackground(new Color(34,34,40));
+		panel_4.setBackground(new Color(34,34,40));
+		panel_5.setBackground(new Color(34,34,40));
+		panel_6.setBackground(new Color(34,34,40));
+		panel_7.setBackground(new Color(34,34,40));
+		
+		createAccountButton.setBackground(buttonColor);
+		cancelButton.setBackground(buttonColor);
+		
 	}
 	
 	private class SwingAction extends AbstractAction {

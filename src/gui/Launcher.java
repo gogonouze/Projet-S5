@@ -12,12 +12,8 @@ import javax.swing.JLabel;
 import java.awt.GridBagLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JTextField;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 
 import gui.gui_element.PopUp_NewAccount;
-import net.miginfocom.swing.MigLayout;
 import object.User;
 
 import javax.swing.GroupLayout;

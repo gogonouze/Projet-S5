@@ -59,7 +59,7 @@ public class Gui {
 	private User user;
 	private JButton sendButton;
 
-	private Color buttonColor = new Color(104, 124, 196);
+	private Color buttonColor = new Color(66, 73, 106);
 	
 	Timer t = new Timer();
 	
@@ -219,6 +219,14 @@ public class Gui {
 		btnNewButton_1.setBackground(buttonColor);
 		btnNewButton_2.setBackground(buttonColor);
 		btnNewButton_3.setBackground(buttonColor);
+		
+		panel_1.setBackground(new Color(34,34,40));
+		panel_2.setBackground(new Color(34,34,40));
+		panel_3.setBackground(new Color(34,34,40));
+		panel_4.setBackground(new Color(34,34,40));
+		
+		scrollPane.setBackground(new Color(34,34,40));
+		scrollPane_1.setBackground(new Color(34,34,40));
 		
 		
 		updateDiscussionsList();

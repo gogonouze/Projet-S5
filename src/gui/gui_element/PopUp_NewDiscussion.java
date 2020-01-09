@@ -29,6 +29,7 @@ import java.awt.Dialog.ModalityType;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
+import java.awt.Font;
 
 public class PopUp_NewDiscussion extends JDialog {
 
@@ -39,6 +40,7 @@ public class PopUp_NewDiscussion extends JDialog {
 	private JComboBox<String> comboBox;
 	private List<Integer> list_id = new ArrayList<>();
 	
+	private Color buttonColor = new Color(66, 73, 106);
 	
 	Timer t = new Timer();
 	
@@ -67,8 +69,11 @@ public class PopUp_NewDiscussion extends JDialog {
 		setTitle("New discussion");
 		this.user = user;
 		
-		this.setBackground(new Color(34,34,40));
-		this.getContentPane().setBackground(new Color(34,34,40));
+		this.setBackground(new Color(34, 34, 40));
+		this.getContentPane().setBackground(new Color(34, 34, 40));
+		
+		contentPanel.setBackground(new Color(34, 34, 40));
+		
 		
 		setAlwaysOnTop(true);
 		setType(Type.POPUP);
@@ -81,15 +86,22 @@ public class PopUp_NewDiscussion extends JDialog {
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(34, 34, 40));
+		
 		contentPanel.add(panel, BorderLayout.NORTH);
 			
 		JLabel lblPickAGroup = new JLabel("Pick a group");
+		lblPickAGroup.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblPickAGroup.setForeground(new Color(255, 255, 255));
 		lblPickAGroup.setHorizontalAlignment(SwingConstants.LEFT);
 		panel.add(lblPickAGroup);
 			
 			
 		comboBox = new JComboBox();
+		comboBox.setFont(new Font("Tahoma", Font.BOLD, 10));
+		comboBox.setForeground(new Color(255, 255, 255));
+		comboBox.setBackground(buttonColor);
+		
 		for (Group g : user.getAllGroup()) {
 			list_id.add(g.getiD_group());
 			comboBox.addItem(g.getName());
@@ -99,18 +111,28 @@ public class PopUp_NewDiscussion extends JDialog {
 		
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBackground(new Color(34, 34, 40));
+		
 		contentPanel.add(scrollPane, BorderLayout.CENTER);
 			
 		textArea = new JTextArea();
+		textArea.setBackground(new Color(64,68,75));
+		textArea.setForeground(new Color(255,255,255));
+		
 		scrollPane.setViewportView(textArea);
 			
 		
 		
 		JPanel buttonPane = new JPanel();
+		buttonPane.setBackground(new Color(34, 34, 40));
+		
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			
 		okButton = new JButton("Send");
+		okButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		okButton.setBackground(buttonColor);
+		okButton.setForeground(new Color(255, 255, 255));
 		okButton.setAction(action_1);
 		okButton.setEnabled(false);
 		okButton.setActionCommand("OK");
@@ -119,6 +141,10 @@ public class PopUp_NewDiscussion extends JDialog {
 			
 			
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setFont(new Font("Tahoma", Font.BOLD, 10));
+		cancelButton.setBackground(buttonColor);
+		cancelButton.setForeground(new Color(255, 255, 255));
+		
 		cancelButton.setAction(action);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
