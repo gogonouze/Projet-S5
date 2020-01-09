@@ -53,7 +53,7 @@ import javax.swing.BoxLayout;
 public class Gui {
 	
 
-	private JFrame frame;
+	private JFrame frmOui;
 	private JTextArea displayArea;
 	private JTextArea messageArea;
 	private User user;
@@ -81,7 +81,7 @@ public class Gui {
 			public void run() {
 				try {
 					Gui window = new Gui(user);
-					window.frame.setVisible(true);
+					window.frmOui.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -102,12 +102,13 @@ public class Gui {
 	 */
 	private void initialize() {
 		
-		frame = new JFrame();
-		frame.setMinimumSize(new Dimension(500,300));
-		frame.setSize(new Dimension(750, 450));
-		frame.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {
+		frmOui = new JFrame();
+		frmOui.setTitle(user.getNameUser());
+		frmOui.setMinimumSize(new Dimension(500,300));
+		frmOui.setSize(new Dimension(750, 450));
+		frmOui.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+		frmOui.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frmOui.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
                 leave();
             }
@@ -115,7 +116,7 @@ public class Gui {
 		
 		
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.WEST);
+		frmOui.getContentPane().add(panel, BorderLayout.WEST);
 		panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -151,7 +152,7 @@ public class Gui {
 		panel.add(list, BorderLayout.CENTER);
 		
 		JPanel panel_2 = new JPanel();
-		frame.getContentPane().add(panel_2, BorderLayout.CENTER);
+		frmOui.getContentPane().add(panel_2, BorderLayout.CENTER);
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_3 = new JPanel();
@@ -303,7 +304,7 @@ public class Gui {
 	private class SwingAction_2 extends AbstractAction {
 		public SwingAction_2() {
 			putValue(NAME, "refresh");
-			putValue(SHORT_DESCRIPTION, "Some short description");
+			putValue(SHORT_DESCRIPTION, "refresh discussions list");
 		}
 		public void actionPerformed(ActionEvent e) {
 			updateDiscussionsList();

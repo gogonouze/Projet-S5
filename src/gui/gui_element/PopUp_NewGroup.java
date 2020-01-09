@@ -51,6 +51,7 @@ public class PopUp_NewGroup extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_NewGroup(User user) {
+		setTitle("New group");
 		setResizable(false);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);

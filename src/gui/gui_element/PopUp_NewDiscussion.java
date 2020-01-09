@@ -63,6 +63,7 @@ public class PopUp_NewDiscussion extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_NewDiscussion(User user) {
+		setTitle("New discussion");
 		this.user = user;
 		
 		setAlwaysOnTop(true);

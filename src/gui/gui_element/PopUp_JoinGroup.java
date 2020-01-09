@@ -57,6 +57,7 @@ public class PopUp_JoinGroup extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_JoinGroup(User user) {
+		setTitle("Join group");
 		setResizable(false);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);

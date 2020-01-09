@@ -22,13 +22,16 @@ import javax.swing.border.EmptyBorder;
 import gui.Gui;
 import gui.Launcher;
 import object.User;
+import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class PopUp_NewAccount extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField loginText;
 	private final Action action = new SwingAction();
-	private JLabel ErrorLabel;
 	
 	private User user;
 	private final Action action_1 = new SwingAction_1();
@@ -51,12 +54,14 @@ public class PopUp_NewAccount extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_NewAccount(User user) {
+		setTitle("New account");
+		setResizable(false);
 		this.user = user;
 		
 		setType(Type.POPUP);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 320, 177);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -65,12 +70,6 @@ public class PopUp_NewAccount extends JDialog {
 		JPanel panel = new JPanel();
 		contentPanel.add(panel, BorderLayout.SOUTH);
 		panel.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.NORTH);
-		
-		ErrorLabel = new JLabel("");
-		panel_1.add(ErrorLabel);
 		
 		JPanel panel_2 = new JPanel();
 		panel.add(panel_2, BorderLayout.CENTER);
@@ -89,23 +88,61 @@ public class PopUp_NewAccount extends JDialog {
 		
 		JPanel panel_3 = new JPanel();
 		contentPanel.add(panel_3, BorderLayout.CENTER);
-		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
+		GridBagLayout gbl_panel_3 = new GridBagLayout();
+		gbl_panel_3.columnWidths = new int[]{134, 164, 0};
+		gbl_panel_3.rowHeights = new int[]{59, 59, 0};
+		gbl_panel_3.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		panel_3.setLayout(gbl_panel_3);
 		
-		JPanel panel_4 = new JPanel();
-		panel_3.add(panel_4);
+		JPanel panel_6 = new JPanel();
+		FlowLayout flowLayout_3 = (FlowLayout) panel_6.getLayout();
+		flowLayout_3.setAlignment(FlowLayout.RIGHT);
+		GridBagConstraints gbc_panel_6 = new GridBagConstraints();
+		gbc_panel_6.fill = GridBagConstraints.BOTH;
+		gbc_panel_6.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_6.gridx = 0;
+		gbc_panel_6.gridy = 0;
+		panel_3.add(panel_6, gbc_panel_6);
 		
 		JLabel lblPseudo = new JLabel("user name");
-		panel_4.add(lblPseudo);
+		panel_6.add(lblPseudo);
+		
+		JPanel panel_4 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
+		gbc_panel_4.fill = GridBagConstraints.BOTH;
+		gbc_panel_4.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_4.gridx = 1;
+		gbc_panel_4.gridy = 0;
+		panel_3.add(panel_4, gbc_panel_4);
 		
 		loginText = new JTextField();
 		panel_4.add(loginText);
 		loginText.setColumns(10);
 		
-		JPanel panel_5 = new JPanel();
-		panel_3.add(panel_5);
+		JPanel panel_7 = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) panel_7.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.RIGHT);
+		GridBagConstraints gbc_panel_7 = new GridBagConstraints();
+		gbc_panel_7.fill = GridBagConstraints.BOTH;
+		gbc_panel_7.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_7.gridx = 0;
+		gbc_panel_7.gridy = 1;
+		panel_3.add(panel_7, gbc_panel_7);
 		
 		JLabel lblNewLabel = new JLabel("Password");
-		panel_5.add(lblNewLabel);
+		panel_7.add(lblNewLabel);
+		
+		JPanel panel_5 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_5.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		GridBagConstraints gbc_panel_5 = new GridBagConstraints();
+		gbc_panel_5.fill = GridBagConstraints.BOTH;
+		gbc_panel_5.gridx = 1;
+		gbc_panel_5.gridy = 1;
+		panel_3.add(panel_5, gbc_panel_5);
 		
 		passwordText = new JTextField();
 		panel_5.add(passwordText);
