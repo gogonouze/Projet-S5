@@ -57,10 +57,11 @@ public class PopUp_JoinGroup extends JDialog {
 	 * Create the dialog.
 	 */
 	public PopUp_JoinGroup(User user) {
+		setResizable(false);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setAlwaysOnTop(true);
 		this.user = user;
-		setBounds(100, 100, 215, 115);
+		setBounds(100, 100, 251, 122);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

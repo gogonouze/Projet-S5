@@ -156,6 +156,7 @@ public class PopUp_NewDiscussion extends JDialog {
 			int id = list_id.get(index);
 					
 			user.createConversation(message, message, user.getGroupFromAllGroup(id));
+			dispose();
 		}
 	}
 }
