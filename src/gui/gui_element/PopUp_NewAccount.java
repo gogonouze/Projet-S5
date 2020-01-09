@@ -52,7 +52,7 @@ public class PopUp_NewAccount extends JDialog {
 		dialog = new JDialog();
 		dialog.setResizable(false);
 		dialog.setBounds(100, 100, 298, 184);
-		dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
 		dialog.getContentPane().add(panel, BorderLayout.SOUTH);
