@@ -1054,7 +1054,7 @@ private LinkedList<String> getAllMessage(int id) {
 		
 		return password;
 	}
-	public static void main(String[] args){
+	public static void launch(){
 		Server c = new Server();
 		Thread t = new Thread(c);
 		t.start();

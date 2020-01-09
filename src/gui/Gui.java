@@ -336,6 +336,7 @@ public class Gui {
 			
 			user.sendMessage(messageArea.getText(), discussion);
 			messageArea.setText("");
+			displayContent();
 		}
 	}
 	private class SwingAction_2 extends AbstractAction {
@@ -345,6 +346,7 @@ public class Gui {
 		}
 		public void actionPerformed(ActionEvent e) {
 			updateDiscussionsList();
+			displayBlank();
 		}
 	}
 	private class SwingAction_3 extends AbstractAction {
