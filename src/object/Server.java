@@ -207,12 +207,13 @@ public class Server implements Runnable{
 																	}
 																	else {
 																		if(nbdot==1) {
-																			group=getGroupBDD(atoi(temp));
+																			
+																			user=temp;
 																			nbdot++;
 																			temp="";
 																		}
 																		else {
-																			user=temp;
+																			group=getGroupBDD(atoi(temp));
 																			temp="";
 
 																		}
