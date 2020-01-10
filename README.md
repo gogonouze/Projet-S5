@@ -19,7 +19,7 @@ Projet L3S5 Informatique
 
 ### Installation
 
-* Téléchargez les executables java :
+* Téléchargez les exécutables java :
     - Server.jar
     - Client.jar
     - Operator.jar
