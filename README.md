@@ -19,6 +19,11 @@ Projet L3S5 Informatique
 
 ### Installation
 
+* Téléchargez les executables java :
+    - Server.jar
+    - Client.jar
+    - Operator.jar
+
 * Pour créer la base de données :
     - Allumer **[wamp](http://www.wampserver.com)**
     - Ouvrir **phpMyAdmin**
@@ -29,7 +34,8 @@ Projet L3S5 Informatique
 
 ### Démarrage
 
-...
+ * Lancer un serveur avec Server.jar
+ * Lancer un client ou un operateur avec Client.jar ou Operator.jar
 
 ### Fabriqué avec
 
