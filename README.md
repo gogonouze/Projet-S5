@@ -39,6 +39,7 @@ Projet L3S5 Informatique
 
 ### Fabriqué avec
 
+* [Amour](https://fr.wikipedia.org/wiki/Amour)
 * [Eclipse](https://www.eclipse.org) - IDE java
 
 
