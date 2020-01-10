@@ -34,8 +34,8 @@ Projet L3S5 Informatique
 
 ### Démarrage
 
- * Lancer un serveur avec Server.jar
- * Lancer un client ou un operateur avec Client.jar ou Operator.jar
+ * Lancer un **serveur** avec **Server.jar**
+ * Lancer un **client** ou un **operateur** avec **Client.jar** ou **Operator.jar**
 
 ### Fabriqué avec
 
